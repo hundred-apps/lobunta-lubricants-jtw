@@ -1,0 +1,146 @@
+﻿{
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "products": "Products",
+    "services": "Services",
+    "customers": "Customers",
+    "blog": "Blog",
+    "career": "Career",
+    "promotion": "Promotion",
+    "privacy": "Privacy Policy",
+    "contact": "Contact",
+    "menu": "Menu",
+    "close": "Close",
+    "open": "Open menu",
+    "primary": "Products & Services"
+  },
+  "common": {
+    "learnMore": "Learn more",
+    "viewAll": "View all",
+    "readMore": "Read more",
+    "back": "Back",
+    "loading": "Loading...",
+    "comingSoon": "This content is not available yet.",
+    "language": "Language",
+    "theme": "Theme",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "openHours": "Opening hours",
+    "callUs": "Phone",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "address": "Address",
+    "downloadProfile": "Download Company Profile (PDF)"
+  },
+  "home": {
+    "statsLabel": "In numbers",
+    "servicesTitle": "Services",
+    "journeyTitle": "Our journey",
+    "categoriesTitle": "Product categories",
+    "categoriesBody": "Lubricant solutions for a wide range of industries.",
+    "customersTitle": "Few of our customers",
+    "blogTitle": "Latest articles",
+    "promoTitle": "Promotions and programs",
+    "contactTitle": "Contact us"
+  },
+  "products": {
+    "title": "Products",
+    "heading": "Product categories",
+    "intro": "As an Official Pertamina Lubricants Distributor, we market every lubricant category for industrial, heavy equipment, marine, and energy needs.",
+    "applications": "Applications",
+    "catalogNote": "The full product list and specifications are managed through our catalogue. Contact our team for stock availability and quotations.",
+    "itemsCount": "{count} products",
+    "empty": "No products have been published yet.",
+    "searchPlaceholder": "Search products...",
+    "allCategories": "All categories"
+  },
+  "services": {
+    "title": "Services",
+    "heading": "Technical and trading services",
+    "intro": "Seven services we deliver to industrial customers, from quality assurance to timely shipping.",
+    "highlights": "What you get",
+    "relatedTitle": "Other services",
+    "contactCta": "Need this service? Discuss it with our team."
+  },
+  "customers": {
+    "title": "Customers",
+    "heading": "Few of our customers",
+    "intro": "Authorized distributor of Pertamina Lubricants for diverse industrial applications."
+  },
+  "blog": {
+    "title": "Blog",
+    "heading": "Articles and insights",
+    "intro": "Technical perspectives on lubricants, lubrication, and product selection.",
+    "empty": "No articles yet.",
+    "publishedOn": "Published",
+    "readingTime": "{minutes} min read",
+    "backToBlog": "All articles"
+  },
+  "career": {
+    "title": "Career",
+    "heading": "Build your career with us",
+    "intro": "We regularly open positions for professionals in lubricant distribution, technical support, and warehouse operations.",
+    "openPositions": "Open positions",
+    "requirements": "Requirements",
+    "location": "Location",
+    "type": "Type",
+    "department": "Department",
+    "postedOn": "Posted",
+    "empty": "No open positions at the moment.",
+"apply": "Apply by email",
+    "requestProfile": "Request the company profile",
+    "sendCv": "Send your CV"
+  },
+  "promotion": {
+    "title": "Promotion Program",
+    "heading": "Promotions and programs",
+    "intro": "The latest promotions and programs from Lobunta Lubricants.",
+    "period": "Period",
+    "terms": "Terms and conditions",
+    "empty": "No active promotion at the moment."
+  },
+  "profile": {
+    "contactTitle": "Contact and operational information",
+    "fax": "Fax",
+    "legalName": "Legal entity"
+  },
+  "contact": {
+    "title": "Contact",
+    "heading": "Get in touch",
+    "intro": "Product enquiries, quotations, or technical support. Our team is ready to help during opening hours.",
+    "formTitle": "Send a message",
+    "name": "Name",
+    "namePlaceholder": "Full name",
+    "email": "Email",
+    "emailPlaceholder": "name {'@'} company.com",
+    "phone": "Phone number",
+    "phonePlaceholder": "08xx xxxx xxxx",
+    "company": "Company",
+    "companyPlaceholder": "Company name",
+    "subject": "Subject",
+    "subjectPlaceholder": "For example: Delo quotation for a 500 kVA genset",
+    "message": "Message",
+    "messagePlaceholder": "Tell us your lubricant needs and machine type",
+    "submit": "Send message",
+    "sending": "Sending...",
+    "success": "Thank you. Your message has been received and will be answered during opening hours.",
+    "error": "The message could not be sent. Please try again or reach us on WhatsApp.",
+    "validation": "Please provide your name, a valid email, and a message.",
+    "orWa": "Faster on WhatsApp",
+    "officeTitle": "Office and warehouse"
+  },
+  "footer": {
+    "tagline": "Official Pertamina Lubricants distributor since 1991.",
+    "explore": "Explore",
+    "services": "Services",
+    "contact": "Contact",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "official": "Authorized Pertamina Lubricants Distributor"
+  },
+  "meta": {
+    "homeTitle": "Lobunta Lubricants - Official Pertamina Oil and Lubricants Distributor",
+    "homeDescription": "Official Pertamina Lubricants distributor since 1991 under Agency No. C 705106. Genuine products, ready stock, competitive pricing, and technical support for industry."
+  }
+}

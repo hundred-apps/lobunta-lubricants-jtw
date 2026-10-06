@@ -1,0 +1,145 @@
+﻿{
+  "nav": {
+    "home": "Beranda",
+    "profile": "Profil",
+    "products": "Produk",
+    "services": "Layanan",
+    "customers": "Customer",
+    "blog": "Blog",
+    "career": "Karier",
+    "promotion": "Promo",
+    "privacy": "Kebijakan Privasi",
+    "contact": "Kontak",
+    "menu": "Menu",
+    "close": "Tutup",
+    "open": "Buka menu",
+    "primary": "Produk & Layanan"
+  },
+  "common": {
+    "learnMore": "Selengkapnya",
+    "viewAll": "Lihat semua",
+    "readMore": "Baca selengkapnya",
+    "back": "Kembali",
+    "loading": "Memuat...",
+    "comingSoon": "Konten ini belum tersedia.",
+    "language": "Bahasa",
+    "theme": "Tema",
+    "lightMode": "Mode terang",
+    "darkMode": "Mode gelap",
+    "openHours": "Jam operasional",
+    "callUs": "Telepon",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "address": "Alamat",
+    "downloadProfile": "Unduh Company Profile (PDF)"
+  },
+"home": {
+    "statsLabel": "Dalam angka",
+    "servicesTitle": "Layanan",
+    "categoriesTitle": "Kategori produk",
+    "categoriesBody": "Solusi pelumas untuk berbagai kebutuhan industri.",
+    "customersTitle": "Beberapa customer kami",
+    "blogTitle": "Artikel terbaru",
+    "promoTitle": "Promo-program",
+    "contactTitle": "Hubungi kami"
+  },
+  "products": {
+    "title": "Produk",
+    "heading": "Kategori produk",
+    "intro": "Sebagai Distributor Resmi Pertamina Lubricants, kami memasarkan seluruh kategori pelumas untuk kebutuhan industri, alat berat, marine, dan energi.",
+    "applications": "Aplikasi",
+    "catalogNote": "Daftar produk dan spesifikasi lengkap dikelola melalui katalog. Hubungi tim kami untuk ketersediaan stok dan penawaran harga.",
+    "itemsCount": "{count} produk",
+    "empty": "Belum ada produk yang dipublikasikan.",
+    "searchPlaceholder": "Cari produk...",
+    "allCategories": "Semua kategori"
+  },
+  "services": {
+    "title": "Layanan",
+    "heading": "Layanan teknis dan perdagangan",
+    "intro": "Tujuh layanan yang kami berikan kepada pelanggan industri, dari jaminan mutu hingga pengiriman tepat waktu.",
+    "highlights": "Yang Anda dapatkan",
+    "relatedTitle": "Layanan lainnya",
+    "contactCta": "Butuh layanan ini? Konsultasikan dengan tim kami."
+  },
+  "customers": {
+    "title": "Customer",
+    "heading": "Beberapa customer kami",
+    "intro": "Distributor resmi pelumas Pertamina untuk berbagai aplikasi industri."
+  },
+  "blog": {
+    "title": "Blog",
+    "heading": "Artikel dan informasi",
+    "intro": "Wawasan teknis seputar pelumas, lubrikasi, dan pemilihan produk.",
+    "empty": "Belum ada artikel.",
+    "publishedOn": "Terbit",
+    "readingTime": "{minutes} menit baca",
+    "backToBlog": "Semua artikel"
+  },
+  "career": {
+    "title": "Karier",
+    "heading": "Bekerja bersama kami",
+    "intro": "Kami membuka lowongan bagi profesional di bidang distribusi pelumas, dukungan teknis, dan operasional gudang.",
+    "openPositions": "Lowongan terbuka",
+    "requirements": "Kualifikasi",
+    "location": "Lokasi",
+    "type": "Tipe",
+    "department": "Departemen",
+    "postedOn": "Dirilis",
+    "empty": "Belum ada lowongan terbuka saat ini.",
+    "apply": "Lamar via email",
+    "sendCv": "Kirim CV",
+"requestProfile": "Minta company profile"
+  },
+  "promotion": {
+    "title": "Promo Program",
+    "heading": "Promo dan program",
+    "intro": "Promosi dan program terbaru dari Lobunta Lubricants.",
+    "period": "Periode",
+    "terms": "Syarat & ketentuan",
+    "empty": "Belum ada promo yang aktif."
+  },
+  "profile": {
+    "contactTitle": "Kontak & informasi operasional",
+    "fax": "Faks",
+    "legalName": "Badan hukum"
+  },
+  "contact": {
+    "title": "Kontak",
+    "heading": "Hubungi kami",
+    "intro": "Konsultasi produk, penawaran harga, atau dukungan teknis. Tim kami siap membantu pada jam kerja.",
+    "formTitle": "Kirim pesan",
+    "name": "Nama",
+    "namePlaceholder": "Nama lengkap",
+    "email": "Email",
+    "emailPlaceholder": "nama {'@'} perusahaan.com",
+    "phone": "Nomor telepon",
+    "phonePlaceholder": "08xx xxxx xxxx",
+    "company": "Perusahaan",
+    "companyPlaceholder": "Nama perusahaan",
+    "subject": "Perihal",
+    "subjectPlaceholder": "Misal: penawaran Delo untuk genset 500 kVA",
+    "message": "Pesan",
+    "messagePlaceholder": "Ceritakan kebutuhan pelumas dan tipe unit Anda",
+    "submit": "Kirim pesan",
+    "sending": "Mengirim...",
+    "success": "Terima kasih. Pesan Anda sudah kami terima dan akan dibalas pada jam kerja.",
+    "error": "Pesan gagal terkirim. Silakan coba lagi atau hubungi kami via WhatsApp.",
+    "validation": "Mohon lengkapi nama, email valid, dan pesan Anda.",
+    "orWa": "Lebih cepat lewat WhatsApp",
+    "officeTitle": "Kantor & gudang"
+  },
+  "footer": {
+    "tagline": "Distributor resmi pelumas Pertamina sejak 1991.",
+    "explore": "Jelajahi",
+    "services": "Layanan",
+    "contact": "Kontak",
+    "rights": "Seluruh hak cipta dilindungi.",
+    "privacy": "Kebijakan Privasi",
+    "official": "Authorized Pertamina Lubricants Distributor"
+  },
+  "meta": {
+    "homeTitle": "Lobunta Lubricants - Distributor Resmi Oli dan Pelumas Pertamina",
+    "homeDescription": "Distributor resmi pelumas Pertamina sejak 1991 dengan Nomor Agen C 705106. Produk orisinal, stok siap kirim, harga kompetitif, dan dukungan teknis untuk industri."
+  }
+}
