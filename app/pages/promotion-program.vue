@@ -42,8 +42,8 @@ useSeoMeta({
                 <h3 class="font-semibold uppercase tracking-wider text-ink-mute">
                   {{ $t('promotion.products') }}
                 </h3>
-                <span v-for="product in promo.products" :key="product" class="ml-2 text-brand-600 dark:text-brand-300">
-                  {{ product }}
+                <span v-for="(product, idx) in promo.products" :key="idx" class="ml-2 text-brand-600 dark:text-brand-300">
+                  {{ pick(product) }}
                 </span>
               </div>
             </div>

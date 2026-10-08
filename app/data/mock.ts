@@ -725,20 +725,6 @@ export const mockHome: HomeContent = {
     ctaPrimary: { label: { id: 'Lihat Produk', en: 'View Products' }, to: '/products' },
     ctaSecondary: { label: { id: 'Konsultasi Gratis', en: 'Free Consultation' }, to: '/contact' }
   },
-  stats: [
-    { id: 1, order: 1, value: '1973', label: { id: 'Tahun berdiri', en: 'Year established' } },
-    { id: 2, order: 2, value: '1991', label: { id: 'Distributor resmi Pertamina', en: 'Official Pertamina distributor' } },
-    { id: 3, order: 3, value: 'C 705106', label: { id: 'Nomor agen Pertamina', en: 'Pertamina agency number' } },
-    { id: 4, order: 4, value: '4', label: { id: 'Lokasi LOBP terlayani', en: 'LOBP locations served' } }
-  ],
-  servicesIntro: {
-    heading: { id: 'Layanan', en: 'Services' },
-    body: {
-      id: 'Kami tidak hanya menjual pelumas. Tim kami menangani segalanya, mulai dari quality assurance sampai technical support, agar pelumas yang Anda gunakan selalu tepat dan bekerja optimal.',
-      en: 'We do not just sell lubricants. Our team covers everything from quality assurance to technical support so the lubricant you use is always correct and performing.'
-    }
-  },
-  services: mockServices,
   aboutIntro: {
     heading: { id: 'Perjalanan kami', en: 'Our journey' },
     body: {
@@ -748,17 +734,7 @@ export const mockHome: HomeContent = {
   },
   milestones: mockMilestones,
   categories: mockCategories,
-  customersIntro: {
-    heading: { id: 'Beberapa customer kami', en: 'Few of our customers' },
-    body: {
-      id: 'Distributor resmi pelumas Pertamina untuk berbagai kebutuhan industri.',
-      en: 'Authorized distributor of Pertamina Lubricants for diverse industrial applications.'
-    }
-  },
   customers: mockCustomers,
-  testimonialsIntro: {
-    heading: { id: 'Testimoni', en: 'Testimonials' }
-  },
   testimonials: mockTestimonials,
   cta: {
     heading: {

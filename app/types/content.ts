@@ -46,17 +46,17 @@ export interface SiteSettings {
 }
 
 export interface HeroConfig {
-  eyebrow: Localized
+  eyebrow?: Localized
   heading: Localized
-  subheading: Localized
+  subheading?: Localized
   image: string
-  imagePosition: 'left' | 'right'
-  textPosition: 'left' | 'right'
-  description: Localized
-  ctaProduct: LocalizedLink
-  ctaContact: LocalizedLink
-  ctaPrimary: LocalizedLink
-  ctaSecondary: LocalizedLink
+  imagePosition?: 'left' | 'right'
+  textPosition?: 'left' | 'right'
+  description?: Localized
+  ctaProduct?: LocalizedLink
+  ctaContact?: LocalizedLink
+  ctaPrimary?: LocalizedLink
+  ctaSecondary?: LocalizedLink
 }
 
 export interface ProfileSection {
@@ -80,14 +80,15 @@ export interface ProductCategory {
 export interface ProductItem {
   id: number
   slug: string
+  sku?: string
   name: Localized
   categorySlug: string
   image: string
   packaging: string
   weight: string
   spec: { label: Localized; value: Localized }[]
-  tdsMediaId: number
-  msdsMediaId: number
+  tdsMediaId?: number
+  msdsMediaId?: number
   description: Localized
   featured: boolean
   status: 'published' | 'draft'
@@ -96,17 +97,67 @@ export interface ProductItem {
 export interface ServiceItem {
   id: number
   slug: string
+  icon?: string
+  order?: number
   title: Localized
   excerpt: Localized
   body: LocalizedHtml
+  highlights?: { id: Localized[]; en: Localized[] }
   image: string
   featured: boolean
+}
+
+export interface CustomerItem {
+  id: number
+  name: string
+  logo: string
+  image?: string
+  industry?: Localized
+  order: number
 }
 
 export interface CustomerImage {
   id: number
   image: string
   alt?: Localized
+}
+
+export interface HeroBlock extends HeroConfig {}
+
+export interface Milestone {
+  id: number
+  year: string
+  order: number
+  title: Localized
+  description: Localized
+}
+
+export interface StatItem {
+  id: number
+  label: Localized
+  value: string
+  order: number
+}
+
+export interface TestimonialItem {
+  id: number
+  author: string
+  role?: Localized
+  company: string
+  rating?: number
+  quote: Localized
+}
+
+export interface PageContent {
+  slug: string
+  title: Localized
+  heading: Localized
+  intro: Localized
+  body: LocalizedHtml
+  heroImage: string
+  metaTitle: Localized
+  metaDescription: Localized
+  updatedAt: string
 }
 
 export interface BlogItem {
@@ -124,9 +175,17 @@ export interface BlogItem {
 export interface PromotionItem {
   id: number
   slug: string
-  name: Localized
+  title: Localized
+  name?: Localized
   description: Localized
-  products: Localized[]
+  body?: LocalizedHtml
+  cover?: string
+  subtitle?: Localized
+  period?: Localized
+  terms?: LocalizedHtml
+  products?: Localized[]
+  isActive: boolean
+  order: number
 }
 
 export interface PostItem {
@@ -146,10 +205,10 @@ export interface PostItem {
 export interface HomeContent {
   hero: HeroConfig
   aboutIntro: { heading: Localized; body: Localized }
-  milestones: { year: string; title: Localized }[]
+  milestones: Milestone[]
   categories: ProductCategory[]
-  customers: CustomerImage[]
-  testimonials: { author: string; quote: Localized; company: string }[]
+  customers: CustomerItem[]
+  testimonials: TestimonialItem[]
   cta: { heading: Localized; body: Localized; button: LocalizedLink }
 }
 

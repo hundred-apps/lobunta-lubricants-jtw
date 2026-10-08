@@ -12,7 +12,7 @@ defineProps<{ items: TestimonialItem[] }>()
       class="card flex flex-col p-6"
     >
       <div class="flex gap-0.5 text-amber-500" :aria-label="`${item.rating} / 5`">
-        <span v-for="star in 5" :key="star" :class="star <= item.rating ? 'opacity-100' : 'opacity-25'">
+        <span v-for="star in 5" :key="star" :class="star <= (item.rating || 5) ? 'opacity-100' : 'opacity-25'">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2l3 6.6 7 .9-5.1 4.9 1.3 7-6.2-3.4L5.8 21.4l1.3-7L2 9.5l7-.9L12 2z" />
           </svg>

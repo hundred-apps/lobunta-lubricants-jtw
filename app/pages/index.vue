@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { HomeContent, PostItem } from '~/types/content'
+import type { HomeContent, PostItem, ServiceItem } from '~/types/content'
 
 const { locale, t } = useI18n()
 
 const { data: home } = await useCms<HomeContent>('home', 'home')
 const { data: posts } = await useCms<PostItem[]>('posts', 'published')
+const { data: services } = await useCms<ServiceItem[]>('services', 'all')
 
 const latestPosts = computed(() => posts.value?.slice(0, 3) ?? [])
 
@@ -25,27 +26,26 @@ useSeoMeta({
       <div class="container-page">
         <UiSectionHeading
           :eyebrow="$t('nav.primary')"
-          :heading="pick(home.aboutIntro.heading)"
-          :body="pick(home.aboutIntro.body)"
+          :heading="$t('home.servicesTitle')"
+          :body="$t('services.intro')"
         />
         <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <milestone-timeline :items="home.milestones" />
+          <ServiceCard
+            v-for="service in services.slice(0, 6)"
+            :key="service.id"
+            :service="service"
+          />
+        </div>
+        <div class="mt-8">
+          <NuxtLink :to="`/${locale}/services`" class="btn-outline">
+            {{ $t('common.viewAll') }} {{ $t('nav.services').toLowerCase() }}
+            <UiIcon name="arrow-right" :size="16" />
+          </NuxtLink>
         </div>
       </div>
     </section>
 
     <section class="section section-alt">
-      <div class="container-page grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <UiSectionHeading
-          :eyebrow="settings ? `Agency ${settings.agencyNumber}` : ''"
-          :heading="pick(home.aboutIntro.heading)"
-          :body="pick(home.aboutIntro.body)"
-        />
-        <MilestoneTimeline :items="home.milestones" />
-      </div>
-    </section>
-
-    <section class="section">
       <div class="container-page">
         <UiSectionHeading
           :eyebrow="$t('nav.products')"
@@ -68,27 +68,26 @@ useSeoMeta({
       </div>
     </section>
 
+    <section class="section">
+      <div class="container-page grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <UiSectionHeading
+          :heading="pick(home.aboutIntro.heading)"
+          :body="pick(home.aboutIntro.body)"
+        />
+        <MilestoneTimeline :items="home.milestones" />
+      </div>
+    </section>
+
     <section v-if="home.customers.length" class="section section-alt">
       <div class="container-page">
-        <UiSectionHeading
-          :eyebrow="$t('nav.customers')"
-        />
+        <UiSectionHeading :eyebrow="$t('nav.customers')" :heading="$t('customers.title')" :body="$t('customers.intro')" />
         <div class="mt-10">
           <CustomerGrid :items="home.customers" />
         </div>
       </div>
     </section>
 
-    <section v-if="home.testimonials.length" class="section">
-      <div class="container-page">
-        <UiSectionHeading align="center" :heading="$t('nav.testimonials')" />
-        <div class="mt-10">
-          <TestimonialGrid :items="home.testimonials" />
-        </div>
-      </div>
-    </section>
-
-    <section v-if="latestPosts.length" class="section section-alt">
+    <section v-if="latestPosts.length" class="section">
       <div class="container-page">
         <UiSectionHeading :heading="$t('home.blogTitle')" align="center" />
         <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

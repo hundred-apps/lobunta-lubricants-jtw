@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import type { ProductCategory } from '~/types/content'
-const { t, locale } = useI18n()
+import type { CustomerItem, ProductCategory } from '~/types/content'
 
-const { data: customers } = useCms<{ id: number; image: string; alt?: { id?: string; en?: string } }[]>('customers', 'all')
+const { locale, t } = useI18n()
+
+const { data: customers } = useCms<CustomerItem[]>('customers', 'all')
 const { data: categories } = useCms<ProductCategory[]>('product-categories', 'all')
 
 useSeoMeta({
@@ -18,10 +18,10 @@ useSeoMeta({
       <div class="container-page">
         <UiSectionHeading
           :eyebrow="$t('nav.customers')"
-          :title="$t('customers.heading')"
-          :intro="$t('customers.intro')"
+          :heading="$t('customers.heading')"
+          :body="$t('customers.intro')"
         />
-        <div class="container-page">
+        <div class="mt-8">
           <CustomerGrid v-if="customers.length" :items="customers" />
           <p v-else class="prose-lkr">{{ $t('common.comingSoon') }}</p>
         </div>
@@ -41,7 +41,10 @@ useSeoMeta({
           </li>
         </ul>
         <div class="mt-8">
-          <NuxtLink :to="`/${locale}/products`" class="btn-primary">{{ $t('nav.products') }}<UiIcon name="arrow-right" :size="16" /></NuxtLink>
+          <NuxtLink :to="`/${locale}/products`" class="btn-primary">
+            {{ $t('nav.products') }}
+            <UiIcon name="arrow-right" :size="16" />
+          </NuxtLink>
         </div>
       </div>
     </section>

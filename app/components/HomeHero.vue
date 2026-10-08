@@ -21,11 +21,11 @@ const { locale } = useI18n()
           {{ pick(hero.subheading) }}
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <NuxtLink :to="`/${locale}${hero.ctaPrimary.to}`" class="btn-accent">
+          <NuxtLink v-if="hero.ctaPrimary" :to="`/${locale}${hero.ctaPrimary.to}`" class="btn-accent">
             {{ pick(hero.ctaPrimary.label) }}
             <UiIcon name="arrow-right" :size="16" />
           </NuxtLink>
-          <NuxtLink :to="`/${locale}${hero.ctaSecondary.to}`" class="btn border border-white/40 text-white hover:bg-white/10">
+          <NuxtLink v-if="hero.ctaSecondary" :to="`/${locale}${hero.ctaSecondary.to}`" class="btn border border-white/40 text-white hover:bg-white/10">
             {{ pick(hero.ctaSecondary.label) }}
           </NuxtLink>
         </div>

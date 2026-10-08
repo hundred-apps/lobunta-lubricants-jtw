@@ -23,7 +23,7 @@ useSeoMeta({
     <section class="section">
       <div class="container-page space-y-6">
         <article
-          v-for="service in services.value"
+          v-for="service in services"
           :key="service.id"
           class="card grid gap-6 p-6 sm:p-8 lg:grid-cols-[auto_1fr]"
         >
