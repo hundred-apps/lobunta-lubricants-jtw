@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ProductItem } from '~/types/content'
 
-defineProps<{ product: ProductItem }>()
+defineProps<{ product: ProductItem; compact?: boolean }>()
 
 const { data: categories } = await useCms<import('~/types/content').ProductCategory[]>('product-categories', 'all')
 const { locale } = useI18n()
@@ -13,7 +13,7 @@ function categoryName(slug: string) {
 </script>
 
 <template>
-  <article class="card flex flex-col overflow-hidden">
+  <NuxtLink :to="`/${locale}/products/${product.slug}`" class="card flex flex-col overflow-hidden transition hover:-translate-y-1 hover:border-brand-300 hover:shadow-lg dark:hover:border-brand-500/50">
     <div class="aspect-[4/3] w-full bg-brand-50 dark:bg-white/5">
       <img
         v-if="product.image"
@@ -26,25 +26,25 @@ function categoryName(slug: string) {
         <UiIcon name="lab" :size="48" :stroke-width="1.2" />
       </div>
     </div>
-    <div class="flex flex-1 flex-col p-5">
+    <div class="flex flex-1 flex-col" :class="compact ? 'p-3' : 'p-5'">
       <p class="text-[11px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
         {{ categoryName(product.categorySlug) }}
       </p>
-      <h3 class="mt-2 text-base">
+      <h3 :class="compact ? 'mt-1 text-sm' : 'mt-2 text-base'">
         {{ pick(product.name) }}
       </h3>
       <p v-if="product.sku" class="mt-1 font-mono text-xs text-ink-mute">
         {{ product.sku }}
       </p>
-      <p class="prose-lkr mt-3 flex-1 text-sm line-clamp-3">
+      <p v-if="!compact" class="prose-lkr mt-3 flex-1 text-sm line-clamp-3">
         {{ pick(product.description) }}
       </p>
-      <dl v-if="product.spec?.length" class="mt-4 space-y-1.5 border-t border-slate-100 pt-4 text-xs dark:border-white/10">
+      <dl v-if="!compact && product.spec?.length" class="mt-4 space-y-1.5 border-t border-slate-100 pt-4 text-xs dark:border-white/10">
         <div v-for="spec in product.spec" :key="spec.label.en" class="flex justify-between gap-4">
           <dt class="text-ink-soft dark:text-slate-400">{{ pick(spec.label) }}</dt>
           <dd class="text-right font-medium">{{ pick(spec.value) }}</dd>
         </div>
       </dl>
     </div>
-  </article>
+  </NuxtLink>
 </template>

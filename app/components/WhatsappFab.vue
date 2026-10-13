@@ -29,7 +29,7 @@ onMounted(() => {
       class="fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:bg-[#1eb356] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#25D366]"
       :aria-label="`WhatsApp ${settings.whatsapp}`"
     >
-      <UiIcon name="whatsapp" :size="28" :stroke-width="1.4" />
+      <UiIcon name="whatsapp" :size="28" :filled="true" />
     </a>
   </Transition>
 </template>

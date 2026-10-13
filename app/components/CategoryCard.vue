@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { ProductCategory } from '~/types/content'
 
-defineProps<{ category: ProductCategory }>()
+const props = defineProps<{ category: ProductCategory; active?: boolean }>()
+
+const { locale } = useI18n()
 </script>
 
 <template>
-  <article class="card flex flex-col p-6 transition hover:-translate-y-1 hover:border-brand-300 hover:shadow-lg dark:hover:border-brand-500/50">
+  <NuxtLink
+    :to="`/${locale}/products?category=${category.slug}`"
+    class="card flex flex-col p-6 transition hover:-translate-y-1 hover:border-brand-300 hover:shadow-lg dark:hover:border-brand-500/50"
+    :class="active ? 'ring-2 ring-brand-500 border-brand-400' : ''"
+  >
     <div class="flex items-start justify-between gap-4">
       <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
         <UiIcon :name="category.icon" :size="24" />
@@ -26,5 +32,5 @@ defineProps<{ category: ProductCategory }>()
         <span>{{ item }}</span>
       </li>
     </ul>
-  </article>
+  </NuxtLink>
 </template>

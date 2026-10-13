@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColumnDef } from '~/admin/entityConfig'
+import type { ColumnDef } from '~/admin/types'
 
 defineProps<{
   columns: ColumnDef[]
@@ -56,7 +56,7 @@ function statusClass(value: unknown): string {
 
 function previewUrl(url: string): string {
   if (/^https?:\/\//.test(url)) return url
-  const base = String(useRuntimeConfig().public.apiBase || '').replace(/\/api\/v1\/?$/, '')
+  const base = String(useRuntimeConfig().public.apiBase || '').replace(/\/+$/, '').replace(/\/api$/, '')
   return base ? `${base}${url.startsWith('/') ? '' : '/'}${url}` : url
 }
 </script>
@@ -139,16 +139,20 @@ function previewUrl(url: string): string {
                 <button
                   type="button"
                   class="btn-ghost !px-2.5 !py-1.5"
+                  :title="'Ubah'"
+                  aria-label="Ubah"
                   @click="emit('edit', rowId(row))"
                 >
-                  Ubah
+                  <UiIcon name="pencil" :size="16" />
                 </button>
                 <button
                   type="button"
                   class="btn-ghost !px-2.5 !py-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                  :title="'Hapus'"
+                  aria-label="Hapus"
                   @click="emit('remove', row)"
                 >
-                  Hapus
+                  <UiIcon name="trash" :size="16" />
                 </button>
               </div>
             </td>

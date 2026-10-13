@@ -4,7 +4,6 @@ import type { SiteSettings } from '~/types/content'
 const props = defineProps<{ settings: SiteSettings | null }>()
 
 const { locale, locales, setLocale } = useI18n()
-const colorMode = useColorMode()
 const open = ref(false)
 const route = useRoute()
 
@@ -19,10 +18,6 @@ async function switchLocale(code: string) {
   open.value = false
 }
 
-function toggleTheme() {
-  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-}
-
 const nav = computed(() => {
   const visibility = props.settings?.menuVisibility ? (typeof props.settings.menuVisibility === 'string' ? JSON.parse(props.settings.menuVisibility) : props.settings.menuVisibility) : {}
   const defaultNav = [
@@ -32,8 +27,6 @@ const nav = computed(() => {
     { key: 'services', label: 'nav.services', to: '/services' },
     { key: 'customers', label: 'nav.customers', to: '/customers' },
     { key: 'blog', label: 'nav.blog', to: '/blog' },
-    { key: 'career', label: 'nav.career', to: '/career' },
-    { key: 'promotion', label: 'nav.promotion', to: '/promotion-program' },
     { key: 'contact', label: 'nav.contact', to: '/contact' }
   ]
   return defaultNav.filter(item => visibility[item.key] !== false)
@@ -63,12 +56,17 @@ const nav = computed(() => {
 
     <div class="container-page flex h-16 items-center justify-between gap-4">
       <NuxtLink :to="`/${locale}`" class="flex items-center gap-3">
-        <span class="grid h-10 w-10 place-items-center rounded-lg bg-brand-700 font-display text-sm font-black text-white">
+        <img
+          v-if="settings?.logo"
+          :src="settings.logo"
+          :alt="pick(settings.companyName)"
+          class="h-11 w-auto max-w-[11rem] object-contain"
+        >
+        <span v-else class="grid h-10 w-10 place-items-center rounded-lg bg-brand-700 font-display text-sm font-black text-white">
           LL
         </span>
-        <span class="leading-tight">
-          <span class="block font-display text-base font-bold text-brand-900 dark:text-white">Lobunta</span>
-          <span class="block text-[11px] font-medium uppercase tracking-wider text-brand-600 dark:text-brand-300">Lubricants</span>
+        <span class="font-display text-base font-bold text-brand-900 dark:text-white">
+          {{ settings ? pick(settings.companyName) : 'Lobunta Lubricants' }}
         </span>
       </NuxtLink>
 
@@ -85,16 +83,6 @@ const nav = computed(() => {
       </nav>
 
       <div class="flex items-center gap-2">
-        <button
-          type="button"
-          class="hidden rounded-lg p-2 text-ink-soft transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10 sm:block"
-          :aria-label="$t('common.theme')"
-          :title="colorMode.value === 'dark' ? $t('common.lightMode') : $t('common.darkMode')"
-          @click="toggleTheme"
-        >
-          <UiIcon :name="colorMode.value === 'dark' ? 'sun' : 'moon'" :size="18" />
-        </button>
-
         <div class="hidden items-center rounded-lg border border-slate-200 p-0.5 sm:flex dark:border-white/15">
           <button
             v-for="item in otherLocales"
@@ -115,7 +103,7 @@ const nav = computed(() => {
           rel="noopener"
           class="hidden items-center gap-2 rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600 md:flex"
         >
-          <UiIcon name="whatsapp" :size="16" />
+          <UiIcon name="whatsapp" :size="16" :filled="true" />
           {{ $t('nav.contact') }}
         </a>
 
@@ -155,10 +143,6 @@ const nav = computed(() => {
             {{ item.code }}
           </button>
         </div>
-        <button type="button" class="btn-ghost !px-3 !py-2" @click="toggleTheme">
-          <UiIcon :name="colorMode.value === 'dark' ? 'sun' : 'moon'" :size="16" />
-          {{ colorMode.value === 'dark' ? $t('common.lightMode') : $t('common.darkMode') }}
-        </button>
       </div>
     </div>
   </header>

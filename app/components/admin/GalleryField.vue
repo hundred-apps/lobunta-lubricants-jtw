@@ -94,10 +94,6 @@ function moveDown(index: number) {
 
 <template>
   <div class="space-y-2">
-    <span class="block text-sm font-semibold text-slate-800 dark:text-slate-100">
-      {{ label || 'Galeri' }}
-    </span>
-
     <div v-if="current.length" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       <div
         v-for="(url, index) in current"

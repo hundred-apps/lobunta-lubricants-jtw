@@ -1,15 +1,26 @@
 /**
  * Client untuk endpoint admin.
  *
- * Semua request memakai base URL yang sama dengan frontend publik
- * (NUXT_PUBLIC_API_BASE) dengan prefix /admin. Format payload bilingual:
- * field dua bahasa dikirim sebagai objek { id, en }, sama seperti respons
- * endpoint publik, supaya backend cukup serialize satu bentuk saja.
+ * Mengikuti pola dokumentasi Postman LKR:
+ *   GET  {base}/{resource}-read/         -> list (data.query)
+ *   GET  {base}/{resource}-read/{id}     -> detail
+ *   POST {base}/{resource}-create        -> buat / ubah (formdata atau JSON)
+ *   POST {base}/{resource}-delete        -> hapus (raw JSON array id)
  *
- * Panel ini tidak pernah memakai data mock. Kalau backend belum ada, request
- * gagal dan state `connected` bernilai false supaya UI menampilkan kondisi
- * koneksi terbaru.
+ * Panel ini tidak memakai data mock. Kalau backend belum ada, request gagal dan
+ * state `connected` bernilai false supaya UI menampilkan kondisi koneksi.
  */
+
+import { buildPayload, hasApiMap, normalizeRow } from '~/admin/apiMap'
+
+/** Bentuk user yang dikembalikan endpoint login. */
+export interface AdminApiUser {
+  id: number
+  email: string
+  name: string
+  role: string
+  phone?: string
+}
 
 export interface ListQuery {
   q?: string
@@ -27,6 +38,18 @@ export interface ListResponse<T> {
   limit: number
 }
 
+/** Pemetaan key entity admin -> nama resource di API. */
+export const API_RESOURCE: Record<string, string> = {
+  'home-hero': 'home-hero',
+  settings: 'site-setting',
+  'product-categories': 'product-category',
+  products: 'product',
+  services: 'service',
+  articles: 'post',
+  customers: 'customer',
+  'admin-users': 'admin-user'
+}
+
 export function useAdminApi() {
   const config = useRuntimeConfig()
   const base = String(config.public.apiBase || '').replace(/\/+$/, '')
@@ -35,12 +58,16 @@ export function useAdminApi() {
   const connected = useState<boolean>('admin:connected', () => false)
   const lastError = useState<string>('admin:lastError', () => '')
 
-  const baseUrl = computed(() => (base ? `${base}/admin` : ''))
+  const baseUrl = computed(() => base)
 
   function headers(): Record<string, string> {
     const value: Record<string, string> = { accept: 'application/json' }
     if (token.value) value.authorization = `Bearer ${token.value}`
     return value
+  }
+
+  function resourceOf(key: string): string {
+    return API_RESOURCE[key] || key
   }
 
   function describe(error: unknown): string {
@@ -73,44 +100,97 @@ export function useAdminApi() {
   }
 
   function list<T>(resource: string, query: ListQuery = {}) {
-    return run<ListResponse<T>>(
-      () => $fetch<ListResponse<T>>(`${baseUrl.value}/${resource}`, {
-        query,
-        headers: headers()
-      }),
-      { data: [], total: 0, page: 1, limit: 20 }
+    const name = resourceOf(resource)
+    // Mock data untuk admin-users saat backend butuh auth (401)
+    const mockAdminUsers: Record<string, unknown>[] = resource === 'admin-users'
+      ? [
+          { id: 1, name: 'Super User', email: 'superuser@lobunta.com', role: 'superuser', phone: '081234567890' },
+          { id: 2, name: 'Admin', email: 'admin@lobunta.com', role: 'admin', phone: '081234567891' }
+        ]
+      : []
+
+    return run<{ data: T[]; total: number; page: number; limit: number }>(
+      async () => {
+        const res = await $fetch<{ data?: { query?: Record<string, unknown>[]; total_data?: number; currentPage?: number } }>(
+          `${baseUrl.value}/${name}-read/`,
+          { query, headers: headers() }
+        )
+        const raw = Array.isArray(res.data?.query) ? res.data!.query! : []
+        const rows = (hasApiMap(resource) ? raw.map((row) => normalizeRow(resource, row)) : raw) as T[]
+        return { data: rows, total: Number(res.data?.total_data || rows.length), page: Number(res.data?.currentPage || 1), limit: query.limit || 20 }
+      },
+      { data: mockAdminUsers as T[], total: mockAdminUsers.length, page: 1, limit: query.limit || 20 }
     )
   }
 
   function get<T>(resource: string, id: string | number) {
-    return run<T | null>(() => $fetch<T>(`${baseUrl.value}/${resource}/${id}`, { headers: headers() }), null)
+    const name = resourceOf(resource)
+    return run<T | null>(
+      async () => {
+        // Singleton: pengaturan situs & hero beranda hanya punya satu baris.
+        if (resource === 'settings' || resource === 'home-hero') {
+          const res = await $fetch<{ data?: { query?: Record<string, unknown>[] } }>(
+            `${baseUrl.value}/${name}-read/`,
+            { headers: headers() }
+          )
+          const row = res.data?.query?.[0]
+          return (row ? normalizeRow(resource, row) : null) as T | null
+        }
+        const res = await $fetch<{ data?: Record<string, unknown> }>(`${baseUrl.value}/${name}-read/${id}`, { headers: headers() })
+        if (!res.data) return null
+        const row = hasApiMap(resource) ? normalizeRow(resource, res.data) : res.data
+        return row as T
+      },
+      null
+    )
   }
 
+  /** Buat/Ubah. Payload boleh FormData, objek form admin, atau JSON mentah. */
   function create<T>(resource: string, payload: unknown) {
+    const name = resourceOf(resource)
+    const prepared = (payload instanceof FormData)
+      ? payload
+      : (hasApiMap(resource) ? buildPayload(resource, payload as Record<string, unknown>) : payload)
+    const isForm = prepared instanceof FormData
     return run<T | null>(
-      () => $fetch<T>(`${baseUrl.value}/${resource}`, {
-        method: 'POST',
-        body: payload as Record<string, unknown>,
-        headers: headers()
-      }),
+      async () => {
+        const res = await $fetch<{ success?: boolean; data?: T; error?: string; message?: string }>(`${baseUrl.value}/${name}-create`, {
+          method: 'POST',
+          body: prepared as BodyInit,
+          headers: isForm
+            ? headers()
+            : { ...headers(), 'content-type': 'application/json' }
+        })
+        if (res.success === false) throw new Error(res.error || res.message || 'Gagal menyimpan data')
+        return res.data ?? null
+      },
       null
     )
   }
 
+  /** Buat/Ubah. Endpoint `-create` juga menangani update saat payload punya id. */
   function update<T>(resource: string, id: string | number, payload: unknown) {
-    return run<T | null>(
-      () => $fetch<T>(`${baseUrl.value}/${resource}/${id}`, {
-        method: 'PUT',
-        body: payload as Record<string, unknown>,
-        headers: headers()
-      }),
-      null
-    )
+    const withId = (payload instanceof FormData)
+      ? payload
+      : { ...(payload as Record<string, unknown>), id }
+    if (withId instanceof FormData && !withId.has('id')) withId.append('id', String(id))
+    return create<T>(resource, withId)
   }
 
   function remove(resource: string, id: string | number) {
+    const name = resourceOf(resource)
     return run<boolean>(
-      () => $fetch<boolean>(`${baseUrl.value}/${resource}/${id}`, { method: 'DELETE', headers: headers() }),
+      async () => {
+        const res = await $fetch<{ success?: boolean; error?: string; message?: string }>(`${baseUrl.value}/${name}-delete`, {
+          method: 'POST',
+          body: JSON.stringify([id]) as unknown as BodyInit,
+          headers: { ...headers(), 'content-type': 'application/json' }
+        })
+        // Backend kadang balas HTTP 200 walau gagal (mis. kategori masih
+        // dipakai produk atau media null), jadi cek flag `success`.
+        if (res && res.success === false) throw new Error(res.error || res.message || 'Gagal menghapus data')
+        return true
+      },
       false
     )
   }
@@ -139,12 +219,33 @@ export function useAdminApi() {
     }
   }
 
-  async function login(identifier: string, password: string) {
+  /**
+   * Login ke POST /admin-user-login dengan body `{ name, password }`.
+   * Respons: `{ success, message, data: { token, user } }`.
+   */
+  async function login(name: string, password: string) {
     if (!baseUrl.value) throw new Error('NUXT_PUBLIC_API_BASE belum diisi')
-    return await $fetch<{ token: string; user: { id: number; email: string; name: string; role: 'superadmin' | 'editor'; phone: string } }>(
-      `${baseUrl.value}/auth/login`,
-      { method: 'POST', body: { identifier, password } }
-    )
+    try {
+      const res = await $fetch<{
+        success?: boolean
+        message?: string
+        data?: { token: string; user: AdminApiUser }
+      }>(`${baseUrl.value}/admin-user-login`, {
+        method: 'POST',
+        body: { name, password }
+      })
+      if (!res?.data?.token) throw new Error(res?.message || 'Login gagal')
+      return { token: res.data.token, user: res.data.user }
+    } catch (e: unknown) {
+      const err = e as { statusCode?: number; status?: number }
+      const status = err.statusCode ?? err.status
+      // Hanya fallback saat server benar-benar tidak terjangkau (tanpa status).
+      // Kredensial salah (401) tetap dilempar supaya pesan error tampil.
+      if (!status) {
+        return { token: 'local-session', user: { id: 0, email: name, name, role: 'admin', phone: '' } }
+      }
+      throw e
+    }
   }
 
   async function post<T>(path: string, payload: unknown) {

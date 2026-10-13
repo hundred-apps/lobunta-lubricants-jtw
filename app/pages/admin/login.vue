@@ -1,126 +1,98 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: false,
-});
+const { login } = useAdminApi()
+const { saveToken } = useAdminAuth()
+const router = useRouter()
+const route = useRoute()
 
-const { login } = useAdminApi();
-const { saveToken, isAuthenticated, profile } = useAdminAuth();
+const email = ref('')
+const password = ref('')
+const loading = ref(false)
+const error = ref('')
 
-const form = reactive({ identifier: "", password: "" });
-const state = ref<"idle" | "sending" | "error">("idle");
-const error = ref("");
-
-async function submit() {
-  error.value = "";
-  state.value = "sending";
+async function handleLogin() {
+  error.value = ''
+  loading.value = true
   try {
-    const result = await login(form.identifier.trim(), form.password);
-    saveToken(result.token, result.user);
-    await navigateTo("/admin");
-  } catch (err) {
-    const e = err as {
-      statusCode?: number;
-      data?: { error?: string; message?: string };
-      message?: string;
-    };
-    state.value = "error";
-    error.value =
-      e.statusCode === 401
-        ? "Email/telepon atau password salah."
-        : e.data?.error ||
-          e.data?.message ||
-          e.message ||
-          "Gagal login. Backend belum bisa dihubungi.";
+    const res = await login(email.value, password.value)
+    if (res.token && res.user) {
+      saveToken(res.token, res.user)
+      const redirect = route.query.redirect?.toString() || '/admin'
+      await router.push(redirect)
+    } else {
+      throw new Error('Respons tidak valid')
+    }
+  } catch (e: unknown) {
+    const err = e as { data?: { error?: string; message?: string }; message?: string }
+    error.value = err.data?.error || err.data?.message || err.message || 'Terjadi kesalahan saat login'
+  } finally {
+    loading.value = false
   }
 }
 </script>
 
 <template>
-  <div
-    class="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-slate-50 dark:bg-brand-950"
-  >
-    <div
-      class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-brand-900/40"
-    >
-      <div class="flex items-center gap-3">
-        <span
-          class="grid h-11 w-11 place-items-center rounded-lg bg-brand-700 font-display text-sm font-black text-white"
-        >
-          LL
-        </span>
-        <div>
-          <h1 class="text-lg">Login CMS</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            Panel admin Lobunta Lubricants
-          </p>
+  <div class="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-brand-950 px-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-700 mx-auto mb-4">
+          <span class="font-display text-2xl font-black text-white">LL</span>
         </div>
+        <h1 class="text-2xl font-bold text-brand-900 dark:text-white">Login Admin</h1>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Masuk untuk mengelola konten</p>
       </div>
 
-      <p
-        v-if="isAuthenticated"
-        class="mt-6 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"
-      >
-        Sudah login sebagai {{ profile?.email }}.
-        <NuxtLink to="/admin" class="font-semibold underline"
-          >Buka dashboard</NuxtLink
-        >
-      </p>
+      <div class="card p-6 space-y-4">
+        <p v-if="error" class="rounded-lg bg-red-50 text-red-700 p-3 text-sm dark:bg-red-500/10 dark:text-red-300" role="alert">
+          {{ error }}
+        </p>
 
-      <form v-else class="mt-6 space-y-4" @submit.prevent="submit">
-        <label class="block">
-          <span class="mb-1.5 block text-sm font-medium"
-            >Email atau Telepon</span
-          >
+        <div>
+          <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nama pengguna</label>
           <input
-            v-model="form.identifier"
+            id="email"
+            v-model="email"
             type="text"
-            required
-            class="field"
             autocomplete="username"
-            placeholder="admin@lobuntalubricants.com atau 08xxxxxxxxxx"
-          />
-        </label>
-        <label class="block">
-          <span class="mb-1.5 block text-sm font-medium">Password</span>
-          <input
-            v-model="form.password"
-            type="password"
             required
-            class="field"
-            autocomplete="current-password"
+            class="field w-full"
+            placeholder="developer"
+            @keyup.enter="handleLogin"
+            :disabled="loading"
           />
-        </label>
+        </div>
 
-        <div class="flex justify-end">
-          <NuxtLink
-            to="/admin/forgot-password"
-            class="text-sm text-brand-700 hover:underline dark:text-brand-300"
-          >
-            Lupa password?
-          </NuxtLink>
+        <div>
+          <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Password</label>
+          <input
+            id="password"
+            v-model="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            class="field w-full"
+            placeholder="••••••••"
+            @keyup.enter="handleLogin"
+            :disabled="loading"
+          />
         </div>
 
         <button
-          type="submit"
-          class="btn-primary w-full"
-          :disabled="state === 'sending'"
+          type="button"
+          class="btn-primary w-full !py-3"
+          :disabled="loading"
+          @click="handleLogin"
         >
-          {{ state === "sending" ? "Memproses..." : "Login" }}
+          <span v-if="loading" class="flex items-center justify-center gap-2">
+            <UiIcon name="spinner" :size="18" class="animate-spin" />
+            Masuk...
+          </span>
+          <span v-else>Masuk</span>
         </button>
+      </div>
 
-        <p
-          v-if="error"
-          class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300"
-          role="alert"
-        >
-          {{ error }}
-        </p>
-      </form>
+      <p class="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
+        Belum punya akun? Hubungi administrator.
+      </p>
     </div>
-
-    <p class="mt-4 text-center text-xs text-slate-500 dark:text-slate-400">
-      Endpoint yang dipakai:
-      <code class="font-mono">POST /api/v1/admin/auth/login</code>
-    </p>
   </div>
 </template>

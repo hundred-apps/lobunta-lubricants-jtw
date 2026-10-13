@@ -2,7 +2,9 @@
 const { data: settings } = await useCompany()
 const { locale } = useI18n()
 
-useHead(() => ({ htmlAttrs: { lang: locale.value } }))
+useHead(() => ({
+  htmlAttrs: { lang: locale.value }
+}))
 </script>
 
 <template>

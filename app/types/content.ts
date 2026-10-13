@@ -36,6 +36,8 @@ export interface SiteSettings {
   email: string
   officeHours: Localized
   logo: string
+  image: string
+  companyProfile: string
   social: {
     facebook?: string
     instagram?: string
@@ -84,14 +86,17 @@ export interface ProductItem {
   name: Localized
   categorySlug: string
   image: string
-  packaging: string
-  weight: string
+  packaging: Localized
+  weight: Localized
   spec: { label: Localized; value: Localized }[]
   tdsMediaId?: number
   msdsMediaId?: number
+  tdsFile?: string
+  msdsFile?: string
   description: Localized
   featured: boolean
   status: 'published' | 'draft'
+  views?: number
 }
 
 export interface ServiceItem {
@@ -172,22 +177,6 @@ export interface BlogItem {
   publishedAt: string
 }
 
-export interface PromotionItem {
-  id: number
-  slug: string
-  title: Localized
-  name?: Localized
-  description: Localized
-  body?: LocalizedHtml
-  cover?: string
-  subtitle?: Localized
-  period?: Localized
-  terms?: LocalizedHtml
-  products?: Localized[]
-  isActive: boolean
-  order: number
-}
-
 export interface PostItem {
   id: number
   slug: string
@@ -200,6 +189,8 @@ export interface PostItem {
   tags: string[]
   publishedAt: string
   readingMinutes: number
+  status: 'published' | 'draft'
+  views?: number
 }
 
 export interface HomeContent {

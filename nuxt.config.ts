@@ -1,13 +1,14 @@
 ﻿export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/i18n', '@nuxtjs/color-mode', '@nuxt/fonts'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/i18n', '@nuxt/fonts', '@nuxt/icon'],
+  icon: {
+    serverBundle: 'local',
+    clientBundle: { scan: true }
+  },
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-      ],
       meta: [
         { name: 'theme-color', content: '#a50e14' }
       ]
@@ -25,12 +26,6 @@
   tailwindcss: {
     cssPath: '~/assets/css/main.css',
     configPath: 'tailwind.config'
-  },
-  colorMode: {
-    classSuffix: '',
-    preference: 'system',
-    fallback: 'light',
-    storageKey: 'lkr-color-mode'
   },
   i18n: {
     strategy: 'prefix',

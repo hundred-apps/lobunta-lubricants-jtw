@@ -7,7 +7,6 @@ import type {
   PostItem,
   ProductCategory,
   ProductItem,
-  PromotionItem,
   ServiceItem,
   SiteSettings,
   TestimonialItem
@@ -50,6 +49,8 @@ export const mockSettings: SiteSettings = {
     en: 'Monday - Friday, 08.00 - 17.00 WIB'
   },
   logo: '/img/logo.svg',
+  image: '/img/profile-hero.svg',
+  companyProfile: '',
   social: {
     facebook: '',
     instagram: '',
@@ -552,8 +553,6 @@ export const mockTestimonials: TestimonialItem[] = []
 
 export const mockPosts: PostItem[] = []
 
-export const mockPromotions: PromotionItem[] = []
-
 export const mockCareers: CareerItem[] = [
   {
     id: 1,
@@ -702,6 +701,81 @@ export const mockPages: Record<string, PageContent> = {
         '<p><strong>Data sharing.</strong> We do not sell or rent your personal data to third parties.</p>',
         '<p><strong>Security.</strong> Data is stored on servers with restricted access and used only by authorised personnel.</p>',
         '<p><strong>Your rights.</strong> You may request access, correction, or deletion of your data by contacting us through the contact page.</p>'
+      ].join('\n')
+    }
+  },
+  faq: {
+    slug: 'faq',
+    updatedAt: '2026-06-01',
+    heroImage: '',
+    title: { id: 'FAQ', en: 'FAQ' },
+    heading: { id: 'Pertanyaan yang sering diajukan', en: 'Frequently asked questions' },
+    metaTitle: {
+      id: 'FAQ — Lobunta Lubricants',
+      en: 'FAQ — Lobunta Lubricants'
+    },
+    metaDescription: {
+      id: 'Pertanyaan yang sering diajukan tentang produk, pemesanan, pembayaran, dan pengiriman pelumas Pertamina di Lobunta Lubricants.',
+      en: 'Frequently asked questions about products, ordering, payment, and delivery of Pertamina lubricants at Lobunta Lubricants.'
+    },
+    intro: {
+      id: 'Beberapa pertanyaan yang paling sering kami terima dari pelanggan industri.',
+      en: 'Some of the questions we most often receive from industrial customers.'
+    },
+    body: {
+      id: [
+        '<details><summary>Apakah produk yang dijual dijamin orisinal?</summary><p>Ya. Kami adalah Distributor Resmi Pertamina Lubricants dengan Nomor Agen C 705106, sehingga seluruh produk dijamin asli langsung dari Pertamina.</p></details>',
+        '<details><summary>Apakah ada minimal pembelian?</summary><p>Tidak ada minimal pembelian untuk pembelian eceran. Untuk harga grosir dan kontrak pasokan rutin, silakan hubungi tim kami untuk penawaran khusus.</p></details>',
+        '<details><summary>Metode pembayaran apa yang tersedia?</summary><p>Kami menerima transfer bank dan pembayaran tunai. Untuk pelanggan korporat, tersedia opsi pembayaran sesuai kesepakatan kontrak.</p></details>',
+        '<details><summary>Apakah bisa dikirim ke luar kota?</summary><p>Bisa. Kami mendistribusikan produk ke seluruh Indonesia melalui mitra logistik, dengan estimasi waktu kirim yang disesuaikan tujuan.</p></details>',
+        '<details><summary>Apakah menyediakan dukungan teknis?</summary><p>Ya. Tim teknis kami siap membantu merekomendasikan grade pelumas yang tepat sesuai tipe mesin dan kondisi operasi Anda.</p></details>',
+        '<details><summary>Bagaimana cara mendapatkan penawaran harga?</summary><p>Kirimkan kebutuhan Anda melalui halaman Kontak atau WhatsApp. Sertakan tipe produk, jumlah, dan lokasi pengiriman untuk respons yang lebih cepat.</p></details>'
+      ].join('\n'),
+      en: [
+        '<details><summary>Are the products guaranteed genuine?</summary><p>Yes. We are an Authorized Distributor of Pertamina Lubricants under Agency No. C 705106, so all products are guaranteed genuine and sourced directly from Pertamina.</p></details>',
+        '<details><summary>Is there a minimum order?</summary><p>There is no minimum order for retail purchases. For wholesale pricing and recurring supply contracts, please contact our team for a special quotation.</p></details>',
+        '<details><summary>Which payment methods are available?</summary><p>We accept bank transfer and cash payment. For corporate customers, payment options can be arranged according to the contract agreement.</p></details>',
+        '<details><summary>Can you deliver outside the city?</summary><p>Yes. We distribute products throughout Indonesia through logistics partners, with estimated delivery times adjusted to the destination.</p></details>',
+        '<details><summary>Do you provide technical support?</summary><p>Yes. Our technical team is ready to help recommend the right lubricant grade for your machine type and operating conditions.</p></details>',
+        '<details><summary>How do I get a price quotation?</summary><p>Send us your requirements through the Contact page or WhatsApp. Include product type, quantity, and delivery location for a faster response.</p></details>'
+      ].join('\n')
+    }
+  },
+  'terms-conditions': {
+    slug: 'terms-conditions',
+    updatedAt: '2026-06-01',
+    heroImage: '',
+    title: { id: 'Syarat & Ketentuan', en: 'Terms & Conditions' },
+    heading: { id: 'Syarat & Ketentuan', en: 'Terms & Conditions' },
+    metaTitle: { id: 'Syarat & Ketentuan', en: 'Terms & Conditions' },
+    metaDescription: {
+      id: 'Syarat dan ketentuan penggunaan layanan serta transaksi di Lobunta Lubricants.',
+      en: 'Terms and conditions for using the services and transactions at Lobunta Lubricants.'
+    },
+    intro: {
+      id: 'Dengan menggunakan layanan dan melakukan transaksi dengan Lobunta Lubricants, Anda menyetujui syarat dan ketentuan berikut.',
+      en: 'By using our services and conducting transactions with Lobunta Lubricants, you agree to the following terms and conditions.'
+    },
+    body: {
+      id: [
+        '<p><strong>1. Ruang lingkup.</strong> Syarat dan ketentuan ini mengatur penggunaan situs serta transaksi pembelian produk dan layanan dari Lobunta Lubricants.</p>',
+        '<p><strong>2. Pesanan.</strong> Pesanan dianggap sah setelah dikonfirmasi oleh tim kami, baik melalui email, telepon, maupun WhatsApp.</p>',
+        '<p><strong>3. Harga.</strong> Harga yang tercantum dapat berubah sewaktu-waktu tanpa pemberitahuan sebelumnya. Harga final mengikuti penawaran resmi yang kami kirimkan.</p>',
+        '<p><strong>4. Pembayaran.</strong> Pembayaran dilakukan sesuai metode dan jangka waktu yang disepakati pada saat konfirmasi pesanan.</p>',
+        '<p><strong>5. Pengiriman.</strong> Waktu pengiriman bersifat estimasi dan dapat dipengaruhi oleh ketersediaan stok serta layanan logistik pihak ketiga.</p>',
+        '<p><strong>6. Jaminan produk.</strong> Seluruh produk yang kami jual dijamin orisinal dari Pertamina. Klaim atas produk yang rusak atau tidak sesuai harus disampaikan segera setelah barang diterima.</p>',
+        '<p><strong>7. Pembatasan tanggung jawab.</strong> Kami tidak bertanggung jawab atas kerugian tidak langsung yang timbul dari penggunaan produk yang tidak sesuai anjuran teknis kami.</p>',
+        '<p><strong>8. Hukum yang berlaku.</strong> Syarat dan ketentuan ini diatur oleh dan ditafsirkan sesuai hukum yang berlaku di Republik Indonesia.</p>'
+      ].join('\n'),
+      en: [
+        '<p><strong>1. Scope.</strong> These terms and conditions govern the use of our site and the purchase of products and services from Lobunta Lubricants.</p>',
+        '<p><strong>2. Orders.</strong> An order is valid once confirmed by our team, whether by email, phone, or WhatsApp.</p>',
+        '<p><strong>3. Pricing.</strong> Listed prices may change at any time without prior notice. The final price follows the official quotation we send.</p>',
+        '<p><strong>4. Payment.</strong> Payment is made according to the method and period agreed upon at order confirmation.</p>',
+        '<p><strong>5. Delivery.</strong> Delivery times are estimates and may be affected by stock availability and third-party logistics services.</p>',
+        '<p><strong>6. Product warranty.</strong> All products we sell are guaranteed genuine from Pertamina. Claims for damaged or non-conforming products must be submitted promptly after receipt.</p>',
+        '<p><strong>7. Limitation of liability.</strong> We are not liable for indirect losses arising from the use of products contrary to our technical recommendations.</p>',
+        '<p><strong>8. Governing law.</strong> These terms and conditions are governed by and construed in accordance with the laws applicable in the Republic of Indonesia.</p>'
       ].join('\n')
     }
   }

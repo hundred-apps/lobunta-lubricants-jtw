@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FieldDef } from '~/admin/entityConfig'
+import type { FieldDef } from '~/admin/types'
 
 definePageMeta({ layout: 'admin' })
 
@@ -8,21 +8,18 @@ const { get, update, lastError } = useAdminApi()
 const fields: FieldDef[] = [
   { name: 'companyName', label: 'Nama perusahaan', kind: 'text', bilingual: true, required: true },
   { name: 'legalName', label: 'Badan hukum', kind: 'text', required: true, help: 'Dipakai di footer, contoh: PT. Lobunta Kencana Raya.' },
-  { name: 'tagline', label: 'Tagline', kind: 'text', bilingual: true },
-  { name: 'description', label: 'Deskripsi perusahaan', kind: 'textarea', bilingual: true, rows: 4, help: 'Tampil di aside profil dan meta description.' },
-  { name: 'agencyNumber', label: 'Nomor agen Pertamina', kind: 'text', help: 'Contoh: C 705106' },
-  { name: 'foundedYear', label: 'Tahun berdiri', kind: 'text' },
-  { name: 'address', label: 'Alamat', kind: 'textarea', bilingual: true, rows: 2 },
-  { name: 'phone', label: 'Nomor telepon', kind: 'repeater', help: 'Satu baris satu nomor. Baris pertama dipakai di header.' },
-  { name: 'whatsapp', label: 'Nomor WhatsApp', kind: 'text', help: 'Format internasional tanpa tanda plus, contoh: 6285282400976' },
-  { name: 'email', label: 'Email', kind: 'text' },
-  { name: 'officeHours', label: 'Jam operasional', kind: 'text', bilingual: true },
-  { name: 'logo', label: 'Logo', kind: 'image' },
-  { name: 'social_facebook', label: 'Facebook', kind: 'text' },
-  { name: 'social_instagram', label: 'Instagram', kind: 'text' },
-  { name: 'social_linkedin', label: 'LinkedIn', kind: 'text' },
-  { name: 'social_youtube', label: 'YouTube', kind: 'text' },
-  { name: 'menuVisibility', label: 'Visibilitas Menu Navigasi', kind: 'textarea', help: 'JSON object: { "home": true, "profile": true, "products": true, "services": true, "customers": true, "blog": true, "career": true, "promotion": true, "contact": true }' }
+  { name: 'tagline', label: 'Tagline', kind: 'text', bilingual: true, required: true },
+  { name: 'description', label: 'Deskripsi perusahaan', kind: 'textarea', bilingual: true, required: true, rows: 4, help: 'Tampil di aside profil dan meta description.' },
+  { name: 'agencyNumber', label: 'Nomor agen Pertamina', kind: 'text', required: true, help: 'Contoh: C 705106' },
+  { name: 'foundedYear', label: 'Tahun berdiri', kind: 'text', required: true },
+  { name: 'address', label: 'Alamat', kind: 'textarea', bilingual: true, required: true, rows: 2 },
+  { name: 'phone', label: 'Nomor telepon', kind: 'repeater', required: true, help: 'Satu baris satu nomor. Baris pertama dipakai di header.' },
+  { name: 'whatsapp', label: 'Nomor WhatsApp', kind: 'text', required: true, help: 'Format internasional tanpa tanda plus, contoh: 6285282400976' },
+  { name: 'email', label: 'Email', kind: 'text', required: true },
+  { name: 'officeHours', label: 'Jam operasional', kind: 'text', bilingual: true, required: true },
+  { name: 'logo', label: 'Logo', kind: 'image', required: true, help: 'Wajib. Dipakai di header, footer, dan ikon tab browser (favicon).' },
+  { name: 'companyProfile', label: 'Company profile', kind: 'image', help: 'Opsional. Berkas PDF profil perusahaan untuk diunduh di halaman profil.' },
+  { name: 'image', label: 'Gambar halaman profil', kind: 'image', help: 'Opsional. Gambar utama (hero) pada halaman profil.' }
 ]
 
 const model = ref<Record<string, unknown>>({})
@@ -46,8 +43,22 @@ onMounted(async () => {
   loading.value = false
 })
 
+function isEmpty(field: FieldDef, value: unknown): boolean {
+  if (field.bilingual) {
+    const bi = (value ?? {}) as { id?: unknown; en?: unknown }
+    return !String(bi.id ?? '').trim() || !String(bi.en ?? '').trim()
+  }
+  if (field.kind === 'repeater') return !Array.isArray(value) || value.length === 0
+  return !String(value ?? '').trim()
+}
+
 async function save() {
   notice.value = null
+  const missing = fields.filter((field) => field.required && isEmpty(field, model.value[field.name]))
+  if (missing.length) {
+    notice.value = { type: 'error', text: `Lengkapi field wajib: ${missing.map((f) => f.label).join(', ')}.` }
+    return
+  }
   saving.value = true
   const result = await update<Record<string, unknown>>('settings', 'site', model.value)
   saving.value = false
@@ -55,7 +66,10 @@ async function save() {
     notice.value = { type: 'error', text: lastError.value || 'Gagal menyimpan pengaturan.' }
     return
   }
-  model.value = { ...defaults(), ...result }
+  // Muat ulang dari API supaya bentuk form (bilingual/media) tetap benar.
+  const fresh = await get<Record<string, unknown>>('settings', 'site')
+  model.value = { ...defaults(), ...(fresh || {}) }
+  await refreshNuxtData(['cms:settings:site', 'cms:home:home'])
   notice.value = { type: 'ok', text: 'Pengaturan disimpan.' }
 }
 

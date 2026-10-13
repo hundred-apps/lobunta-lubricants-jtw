@@ -1,57 +1,94 @@
 <script setup lang="ts">
 import type { PostItem } from '~/types/content'
 
+const { locale } = useI18n()
 const route = useRoute()
-const { locale, t } = useI18n()
+const { getPost } = useContentSource()
 
-const slug = computed(() => String(route.params.slug || ''))
-const { data: posts } = await useCms<PostItem[]>('posts', 'published')
-
-const post = computed(() => posts.value.find((item) => item.slug === slug.value) ?? null)
+const slug = String(route.params.slug || '')
+const { data: post } = await useAsyncData<PostItem | null>(`post:${slug}`, () => getPost(slug))
 
 if (!post.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Post not found', fatal: true })
+  throw createError({ statusCode: 404, statusMessage: 'Artikel tidak ditemukan' })
 }
 
-useSeoMeta({
-  title: () => `${pick(post.value!.title)} | Lobunta Lubricants`,
-  description: () => pick(post.value!.excerpt),
-  ogType: 'article'
+const { trackView } = useContentSource()
+onMounted(() => {
+  if (post.value) trackView('/post-view', post.value.id).catch(() => {})
 })
+
+useSeoMeta({
+  title: () => `${pick(post.value?.title)} | Lobunta Lubricants`,
+  description: () => pick(post.value?.excerpt),
+  ogTitle: () => pick(post.value?.title),
+  ogDescription: () => pick(post.value?.excerpt),
+  ogType: 'article',
+  ogImage: () => post.value?.cover,
+  articlePublishedTime: () => post.value?.publishedAt,
+  articleAuthor: () => post.value?.author ? [post.value.author] : []
+})
+
+function formattedDate(dateStr: string): string {
+  if (!dateStr) return ''
+  return new Date(dateStr).toLocaleDateString(locale.value === 'id' ? 'id-ID' : 'en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
+}
 </script>
 
 <template>
-  <article v-if="post" class="pb-16">
-    <PageHero
-      :eyebrow="pick(post.category)"
-      :title="pick(post.title)"
-      :intro="pick(post.excerpt)"
-      :image="post.cover"
-    />
+  <div v-if="post" class="min-h-screen">
+    <article class="section">
+      <div class="container-page max-w-3xl">
+        <header class="mb-8">
+          <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+            <time :datetime="post.publishedAt">
+              {{ formattedDate(post.publishedAt) }}
+            </time>
+            <span v-if="post.category?.id || post.category?.en" class="px-2 py-0.5 rounded bg-brand-50 text-brand-700 text-xs font-medium dark:bg-brand-900/30 dark:text-brand-300">
+              {{ pick(post.category) }}
+            </span>
+            <span v-if="post.author" class="text-slate-500">
+              Oleh {{ post.author }}
+            </span>
+          </div>
 
-    <div class="container-page grid gap-10 pt-10 lg:grid-cols-[1.6fr_0.4fr]">
-      <ProseBlock :html="pick(post.body)" />
+          <h1 class="font-display text-3xl md:text-4xl font-bold text-brand-900 dark:text-white leading-tight">
+            {{ pick(post.title) }}
+          </h1>
 
-      <aside class="space-y-6">
-        <div class="card p-5 text-sm">
-          <p class="text-xs uppercase tracking-wider text-ink-mute">
-            {{ $t('blog.publishedOn') }}
-          </p>
-          <p class="mt-1 font-medium">
-            {{ formatDate(post.publishedAt, locale) }}
-          </p>
-          <p class="mt-4 text-xs uppercase tracking-wider text-ink-mute">
-            {{ $t('blog.readingTime', { minutes: post.readingMinutes }) }}
-          </p>
-          <p v-if="post.author" class="mt-4 text-xs uppercase tracking-wider text-ink-mute">
-            {{ post.author }}
-          </p>
+          <div v-if="post.cover" class="mt-6 aspect-[16/9] rounded-xl overflow-hidden">
+            <img :src="post.cover" :alt="pick(post.title)" class="h-full w-full object-cover">
+          </div>
+        </header>
+
+        <div v-if="post.tags?.length" class="mb-8 flex flex-wrap gap-2">
+          <span v-for="tag in post.tags" :key="tag" class="px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-sm dark:bg-brand-900/30 dark:text-brand-300">
+            {{ tag }}
+          </span>
         </div>
-        <NuxtLink :to="`/${locale}/blog`" class="btn-outline w-full">
-          <UiIcon name="arrow-right" :size="16" style="transform: rotate(180deg)" />
-          {{ $t('blog.backToBlog') }}
-        </NuxtLink>
-      </aside>
-    </div>
-  </article>
+
+        <div class="prose prose-brand max-w-none dark:prose-invert">
+          <div v-html="pick(post.body)" />
+        </div>
+
+        <footer class="mt-12 pt-8 border-t border-slate-200 dark:border-white/10">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+              <UiIcon name="calendar" :size="16" />
+              <time :datetime="post.publishedAt">{{ formattedDate(post.publishedAt) }}</time>
+            </div>
+            <div class="flex items-center gap-2">
+              <NuxtLink :to="`/${locale}/blog`" class="btn-outline">
+                <UiIcon name="arrow-left" :size="16" />
+                Kembali ke Blog
+              </NuxtLink>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </article>
+  </div>
 </template>

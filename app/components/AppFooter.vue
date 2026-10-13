@@ -15,8 +15,8 @@ const explore = computed(() => [
   { label: 'nav.products', to: '/products' },
   { label: 'nav.customers', to: '/customers' },
   { label: 'nav.blog', to: '/blog' },
-  { label: 'nav.career', to: '/career' },
-  { label: 'nav.promotion', to: '/promotion-program' },
+  { label: 'nav.faq', to: '/faq' },
+  { label: 'nav.terms', to: '/terms-conditions' },
   { label: 'nav.privacy', to: '/privacy-policy' }
 ])
 
@@ -37,10 +37,17 @@ const socials = computed(() => {
     <div class="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
       <div>
         <NuxtLink :to="`/${locale}`" class="flex items-center gap-3">
-          <span class="grid h-10 w-10 place-items-center rounded-lg bg-white font-display text-sm font-black text-brand-700">LL</span>
-          <span class="leading-tight">
-            <span class="block font-display text-base font-bold text-white">Lobunta</span>
-            <span class="block text-[11px] font-medium uppercase tracking-wider text-brand-200">Lubricants</span>
+          <img
+            v-if="settings?.logo"
+            :src="settings.logo"
+            :alt="pick(settings.companyName)"
+            class="h-11 w-auto max-w-[10rem] rounded-lg bg-white object-contain p-1"
+          >
+          <span v-else class="grid h-10 w-10 place-items-center rounded-lg bg-white font-display text-sm font-black text-brand-700">
+            LL
+          </span>
+          <span class="font-display text-base font-bold text-white">
+            {{ settings ? pick(settings.companyName) : 'Lobunta Lubricants' }}
           </span>
         </NuxtLink>
         <p v-if="settings" class="mt-4 text-sm leading-relaxed text-brand-100">

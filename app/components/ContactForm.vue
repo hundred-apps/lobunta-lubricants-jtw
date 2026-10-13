@@ -114,7 +114,7 @@ async function submit() {
         {{ state === 'sending' ? $t('contact.sending') : $t('contact.submit') }}
       </button>
       <a :href="waHref" target="_blank" rel="noopener" class="btn-outline">
-        <UiIcon name="whatsapp" :size="16" />
+        <UiIcon name="whatsapp" :size="16" :filled="true" />
         {{ $t('contact.orWa') }}
       </a>
     </div>

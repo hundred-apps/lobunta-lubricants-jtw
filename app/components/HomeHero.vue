@@ -8,8 +8,11 @@ const { locale } = useI18n()
 <template>
   <section class="relative overflow-hidden bg-brand-700 text-white">
     <div class="absolute inset-0 bg-[radial-gradient(70%_120%_at_15%_0%,rgb(195_18_23/0.75),transparent)]" />
-    <div class="container-page relative grid gap-10 py-16 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-      <div>
+    <div
+      class="container-page relative grid gap-10 py-16 sm:py-24 lg:items-center"
+      :class="hero.imagePosition === 'left' ? 'lg:grid-cols-[0.95fr_1.05fr]' : 'lg:grid-cols-[1.05fr_0.95fr]'"
+    >
+      <div :class="hero.imagePosition === 'left' ? 'lg:order-2' : ''">
         <p class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-brand-100">
           <UiIcon name="shield" :size="14" />
           {{ pick(hero.eyebrow) }}
@@ -31,7 +34,7 @@ const { locale } = useI18n()
         </div>
       </div>
 
-      <div class="relative">
+      <div class="relative" :class="hero.imagePosition === 'left' ? 'lg:order-1' : ''">
         <img :src="hero.image" :alt="pick(hero.heading)" class="w-full rounded-3xl border border-white/10 bg-white/5 p-4" fetchpriority="high">
       </div>
     </div>

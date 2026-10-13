@@ -6,11 +6,12 @@
     "services": "Layanan",
     "customers": "Customer",
     "blog": "Blog",
-    "career": "Karier",
-    "promotion": "Promo",
+"career": "Karier",
     "privacy": "Kebijakan Privasi",
     "contact": "Kontak",
     "menu": "Menu",
+    "faq": "FAQ",
+    "terms": "Syarat & Ketentuan",
     "close": "Tutup",
     "open": "Buka menu",
     "primary": "Produk & Layanan"
@@ -52,7 +53,14 @@
     "itemsCount": "{count} produk",
     "empty": "Belum ada produk yang dipublikasikan.",
     "searchPlaceholder": "Cari produk...",
-    "allCategories": "Semua kategori"
+    "allCategories": "Semua kategori",
+    "sku": "SKU",
+    "detailHeading": "Detail produk",
+    "packaging": "Kemasan",
+    "weight": "Berat/Volume",
+    "specTitle": "Spesifikasi teknis",
+    "relatedTitle": "Produk terkait",
+    "backToProducts": "Kembali ke produk"
   },
   "services": {
     "title": "Layanan",
@@ -65,7 +73,8 @@
   "customers": {
     "title": "Customer",
     "heading": "Beberapa customer kami",
-    "intro": "Distributor resmi pelumas Pertamina untuk berbagai aplikasi industri."
+    "intro": "Distributor resmi pelumas Pertamina untuk berbagai aplikasi industri.",
+    "viewAll": "Lihat customer lainnya"
   },
   "blog": {
     "title": "Blog",
@@ -74,7 +83,8 @@
     "empty": "Belum ada artikel.",
     "publishedOn": "Terbit",
     "readingTime": "{minutes} menit baca",
-    "backToBlog": "Semua artikel"
+    "backToBlog": "Semua artikel",
+    "viewAll": "Lihat artikel lainnya"
   },
   "career": {
     "title": "Karier",
@@ -91,18 +101,25 @@
     "sendCv": "Kirim CV",
 "requestProfile": "Minta company profile"
   },
-  "promotion": {
-    "title": "Promo Program",
-    "heading": "Promo dan program",
-    "intro": "Promosi dan program terbaru dari Lobunta Lubricants.",
-    "period": "Periode",
-    "terms": "Syarat & ketentuan",
-    "empty": "Belum ada promo yang aktif."
-  },
   "profile": {
     "contactTitle": "Kontak & informasi operasional",
     "fax": "Faks",
-    "legalName": "Badan hukum"
+    "legalName": "Badan hukum",
+    "aboutTitle": "Tentang kami",
+    "businessLines": "Bidang usaha",
+    "founded": "Tahun berdiri",
+    "agency": "Nomor agen",
+    "categories": "Kategori produk",
+    "customers": "Customer",
+    "valuesTitle": "Nilai & komitmen",
+    "valuesBody": "Prinsip yang kami pegang dalam melayani pelanggan industri di seluruh Indonesia.",
+    "value1": "Kualitas orisinal terjamin",
+    "value2": "Stok siap kirim",
+    "value3": "Harga kompetitif",
+    "value4": "Pengiriman tepat waktu",
+    "value5": "Distribusi ke seluruh Indonesia",
+    "value6": "Dukungan teknis",
+    "downloadBody": "Minta dokumen company profile lengkap untuk kebutuhan kerja sama dan pengadaan."
   },
   "contact": {
     "title": "Kontak",

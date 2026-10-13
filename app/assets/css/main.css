@@ -74,6 +74,22 @@
     @apply font-semibold text-brand-900 dark:text-white;
   }
 
+  .prose-lkr details {
+    @apply mt-4 rounded-xl border border-slate-200 bg-white px-5 py-4 dark:border-white/10 dark:bg-brand-900/40;
+  }
+
+  .prose-lkr summary {
+    @apply cursor-pointer list-none font-semibold text-brand-900 marker:hidden dark:text-white;
+  }
+
+  .prose-lkr summary::-webkit-details-marker {
+    @apply hidden;
+  }
+
+  .prose-lkr details p {
+    @apply mt-3;
+  }
+
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition
       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;

@@ -4,10 +4,12 @@ import type { HomeContent, PostItem, ServiceItem } from '~/types/content'
 const { locale, t } = useI18n()
 
 const { data: home } = await useCms<HomeContent>('home', 'home')
-const { data: posts } = await useCms<PostItem[]>('posts', 'published')
+const { data: posts } = await useCms<PostItem[]>('posts', 'all')
 const { data: services } = await useCms<ServiceItem[]>('services', 'all')
 
-const latestPosts = computed(() => posts.value?.slice(0, 3) ?? [])
+const latestPosts = computed(() => [...(posts.value || [])]
+  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+  .slice(0, 6))
 
 useSeoMeta({
   title: () => t('meta.homeTitle'),
@@ -25,29 +27,6 @@ useSeoMeta({
     <section class="section">
       <div class="container-page">
         <UiSectionHeading
-          :eyebrow="$t('nav.primary')"
-          :heading="$t('home.servicesTitle')"
-          :body="$t('services.intro')"
-        />
-        <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <ServiceCard
-            v-for="service in services.slice(0, 6)"
-            :key="service.id"
-            :service="service"
-          />
-        </div>
-        <div class="mt-8">
-          <NuxtLink :to="`/${locale}/services`" class="btn-outline">
-            {{ $t('common.viewAll') }} {{ $t('nav.services').toLowerCase() }}
-            <UiIcon name="arrow-right" :size="16" />
-          </NuxtLink>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-alt">
-      <div class="container-page">
-        <UiSectionHeading
           :eyebrow="$t('nav.products')"
           :heading="$t('home.categoriesTitle')"
           :body="$t('home.categoriesBody')"
@@ -59,9 +38,32 @@ useSeoMeta({
             :category="category"
           />
         </div>
-        <div class="mt-8">
+        <div class="mt-10 flex justify-center">
           <NuxtLink :to="`/${locale}/products`" class="btn-primary">
             {{ $t('common.viewAll') }}
+            <UiIcon name="arrow-right" :size="16" />
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container-page">
+        <UiSectionHeading
+          :eyebrow="$t('nav.primary')"
+          :heading="$t('home.servicesTitle')"
+          :body="$t('services.intro')"
+        />
+        <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ServiceCard
+            v-for="service in services.slice(0, 6)"
+            :key="service.id"
+            :service="service"
+          />
+        </div>
+        <div class="mt-10 flex justify-center">
+          <NuxtLink :to="`/${locale}/services`" class="btn-outline">
+            {{ $t('common.viewAll') }} {{ $t('nav.services').toLowerCase() }}
             <UiIcon name="arrow-right" :size="16" />
           </NuxtLink>
         </div>
@@ -83,6 +85,12 @@ useSeoMeta({
         <UiSectionHeading :eyebrow="$t('nav.customers')" :heading="$t('customers.title')" :body="$t('customers.intro')" />
         <div class="mt-10">
           <CustomerGrid :items="home.customers" />
+        </div>
+        <div class="mt-10 flex justify-center">
+          <NuxtLink :to="`/${locale}/customers`" class="btn-outline">
+            {{ $t('customers.viewAll') }}
+            <UiIcon name="arrow-right" :size="16" />
+          </NuxtLink>
         </div>
       </div>
     </section>
@@ -109,6 +117,12 @@ useSeoMeta({
               </div>
             </NuxtLink>
           </article>
+        </div>
+        <div class="mt-10 flex justify-center">
+          <NuxtLink :to="`/${locale}/blog`" class="btn-outline">
+            {{ $t('blog.viewAll') }}
+            <UiIcon name="arrow-right" :size="16" />
+          </NuxtLink>
         </div>
       </div>
     </section>

@@ -2,13 +2,22 @@
 import type { ProductCategory, ProductItem } from '~/types/content'
 
 const { locale, t } = useI18n()
+const route = useRoute()
 
 const { data: categories } = await useCms<ProductCategory[]>('product-categories', 'all')
 const { data: products } = await useCms<ProductItem[]>('products', 'published')
 const { data: settings } = await useCompany()
 
 const keyword = ref('')
-const activeCategory = ref('all')
+const activeCategory = ref(typeof route.query.category === 'string' ? route.query.category : 'all')
+const productsSection = ref<HTMLElement | null>(null)
+
+watch(() => route.query.category, (slug) => {
+  activeCategory.value = typeof slug === 'string' ? slug : 'all'
+  if (activeCategory.value !== 'all') {
+    productsSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+})
 
 const filteredProducts = computed(() => {
   const query = keyword.value.trim().toLowerCase()
@@ -42,12 +51,13 @@ useSeoMeta({
             v-for="category in categories"
             :key="category.id"
             :category="category"
+            :active="category.slug === activeCategory"
           />
         </div>
       </div>
     </section>
 
-    <section v-if="products.length" class="section section-alt">
+    <section ref="productsSection" v-if="products.length" class="section section-alt">
       <div class="container-page">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <UiSectionHeading :heading="$t('products.title')" />
@@ -105,7 +115,7 @@ useSeoMeta({
               rel="noopener"
               class="btn-primary"
             >
-              <UiIcon name="whatsapp" :size="16" />
+              <UiIcon name="whatsapp" :size="16" :filled="true" />
               {{ $t('nav.contact') }}
             </a>
           </div>

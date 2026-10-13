@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { ENTITIES } from '~/admin/entityConfig'
-
 definePageMeta({ layout: 'admin' })
 
 const { list, connected } = useAdminApi()
 
-const countable = ENTITIES.filter((entity) => entity.countable)
+const countable = [
+  { key: 'product-categories', label: 'Kategori Produk', icon: 'delivery' },
+  { key: 'products', label: 'Produk', icon: 'lab' },
+  { key: 'services', label: 'Layanan', icon: 'lab' },
+  { key: 'articles', label: 'Artikel', icon: 'document' },
+  { key: 'customers', label: 'Customer', icon: 'factory' }
+]
 const counts = reactive<Record<string, number | null>>({})
 const loading = ref(true)
 
 async function load() {
   loading.value = true
-  for (const entity of countable) {
-    const result = await list(entity.key, { limit: 1 })
-    counts[entity.key] = result.total
+  for (const item of countable) {
+    const result = await list(item.key, { limit: 1 })
+    counts[item.key] = result.total
   }
   loading.value = false
 }

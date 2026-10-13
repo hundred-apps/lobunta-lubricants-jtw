@@ -1,21 +1,16 @@
 /**
  * Auth admin.
  *
- * Token JWT disimpan di cookie supaya tetap ada setelah refresh. Backend yang
- * meng-issue token lewat POST /api/v1/admin/auth/login.
- *
- * CATATAN: proteksi route /admin belum diaktifkan. Middleware guard sengaja
- * ditunda sampai backend auth benar-benar ada, supaya panel tetap bisa dibuka
- * untuk memeriksa dan menguji tampilan data. Saat backend siap, tambahkan
- * middleware yang mengarahkan pathname /admin (kecuali /admin/login) ke
- * /admin/login bila token kosong.
+ * Token JWT dari POST /api/admin-user-login disimpan di cookie supaya tetap ada
+ * setelah refresh. Proteksi route /admin dijalankan oleh middleware global
+ * app/middleware/admin-auth.global.ts.
  */
 
 export interface AdminUser {
   id: number
   email: string
   name: string
-  role: 'superadmin' | 'editor'
+  role: string
 }
 
 const TOKEN_KEY = 'lkr_admin_token'
@@ -49,9 +44,28 @@ export function useAdminAuth() {
     user.value = JSON.stringify(nextUser)
   }
 
+  /**
+   * Login lokal tanpa backend (fallback saat server tidak terjangkau).
+   * Endpoint normal: useAdminApi().login().
+   */
+  function loginLocal(identifier: string) {
+    const name = identifier || 'Administrator'
+    saveToken('local-session', {
+      id: 0,
+      email: identifier,
+      name,
+      role: 'superuser'
+    })
+  }
+
   function clear() {
     token.value = null
     user.value = null
+  }
+
+  function logout() {
+    clear()
+    return navigateTo('/admin/login')
   }
 
   return {
@@ -59,7 +73,8 @@ export function useAdminAuth() {
     profile,
     isAuthenticated,
     saveToken,
+    loginLocal,
     clear,
-    logout: clear
+    logout
   }
 }

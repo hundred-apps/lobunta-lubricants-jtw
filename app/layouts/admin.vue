@@ -1,35 +1,40 @@
 <script setup lang="ts">
-import { ENTITIES } from '~/admin/entityConfig'
-
 const route = useRoute()
 const { profile, isAuthenticated, logout } = useAdminAuth()
 const { connected, lastError, baseUrl } = useAdminApi()
+const { data: company } = useCompany()
 
 const collapsed = ref(false)
 
-const groups = [
+const isSuperUser = computed(() => profile.value?.role === 'superuser')
+
+const groups = computed(() => [
   {
     label: 'Umum',
     items: [
       { to: '/admin', label: 'Dashboard', icon: 'target' },
       { to: '/admin/settings', label: 'Pengaturan situs', icon: 'gear' },
-      { to: '/admin/media', label: 'Media', icon: 'document' },
-      { to: '/admin/inquiries', label: 'Pesan masuk', icon: 'mail' }
+      { to: '/admin/media', label: 'Media', icon: 'document' }
     ]
   },
   {
     label: 'Konten',
-    items: ENTITIES
-      .filter((entity) => !['inquiries', 'admin-users'].includes(entity.key))
-      .map((entity) => ({ to: `/admin/${entity.key}`, label: entity.label, icon: entity.icon }))
+    items: [
+      { to: '/admin/home-hero', label: 'Hero Beranda', icon: 'target' },
+      { to: '/admin/product-categories', label: 'Kategori Produk', icon: 'delivery' },
+      { to: '/admin/products', label: 'Produk', icon: 'lab' },
+      { to: '/admin/services', label: 'Layanan', icon: 'lab' },
+      { to: '/admin/articles', label: 'Artikel', icon: 'document' },
+      { to: '/admin/customers', label: 'Customer', icon: 'factory' }
+    ]
   },
-  {
+  ...(isSuperUser.value ? [{
     label: 'Sistem',
     items: [
       { to: '/admin/admin-users', label: 'User admin', icon: 'engineer' }
     ]
-  }
-]
+  }] : [])
+])
 
 function isActive(to: string): boolean {
   if (to === '/admin') return route.path === '/admin'
@@ -45,9 +50,13 @@ function isActive(to: string): boolean {
         :class="collapsed ? 'w-16' : 'w-64'"
       >
         <div class="flex h-16 items-center gap-2 border-b border-slate-200 px-4 dark:border-white/10">
-          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-700 font-display text-xs font-black text-white">
-            LL
-          </span>
+          <img
+            v-if="company.logo"
+            :src="company.logo"
+            alt="Logo"
+            class="h-9 w-9 shrink-0 rounded-lg object-contain"
+          >
+          <UiIcon v-else name="oil" :size="28" class="text-brand-700 dark:text-brand-300" />
           <span v-if="!collapsed" class="leading-tight">
             <span class="block font-display text-sm font-bold text-brand-900 dark:text-white">Lobunta CMS</span>
             <span class="block text-[10px] uppercase tracking-wider text-slate-500">Panel admin</span>
@@ -114,16 +123,10 @@ function isActive(to: string): boolean {
           </div>
 
           <div class="flex items-center gap-3">
-            <span v-if="!isAuthenticated" class="chip">
-              Mode preview
-            </span>
-            <span v-else class="text-sm text-slate-600 dark:text-slate-300">
+            <span class="text-sm text-slate-600 dark:text-slate-300">
               {{ profile?.name || profile?.email }}
             </span>
-            <NuxtLink v-if="!isAuthenticated" to="/admin/login" class="btn-primary !py-2">
-              Login
-            </NuxtLink>
-            <button v-else type="button" class="btn-outline !py-2" @click="logout">
+            <button type="button" class="btn-outline !py-2" @click="logout">
               Keluar
             </button>
           </div>
