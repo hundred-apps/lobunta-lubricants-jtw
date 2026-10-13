@@ -6,7 +6,7 @@
  * payload saat dibuat/diubah. Mengikuti dokumentasi Postman LKR JTW LUBRICANTS.
  */
 
-type Kind = 'bilingual' | 'media' | 'plain' | 'bool' | 'number'
+type Kind = 'bilingual' | 'media' | 'plain' | 'bool' | 'number' | 'gallery'
 
 interface FieldMap {
   /**
@@ -81,7 +81,8 @@ const MAPS: Record<string, Record<string, FieldMap>> = {
     officeHours: { api: 'officeHours', kind: 'bilingual' },
     logo: { api: 'logoMedia', kind: 'media', file: 'media', connect: 'logoMediaId' },
     companyProfile: { api: 'companyProfileMedia', kind: 'media', file: 'companyProfileMedia', connect: 'companyProfileMediaId' },
-    image: { api: 'imageMedia', kind: 'media', file: 'image', connect: 'imageMediaId' }
+    profile: { api: 'profileMedia', kind: 'media', file: 'profileMedia', connect: 'profileMediaId' },
+    gallery: { api: 'galleryImages', kind: 'gallery', file: 'galleryMedia', connect: 'galleryImagesId' }
   },
   articles: {
     title: { api: 'title', kind: 'bilingual' },
@@ -172,14 +173,19 @@ export function normalizeRow(entityKey: string, row: Record<string, unknown>): R
       const connectKey = def.connect ?? `${def.api}Id`
       const id = row[connectKey] ?? media?.id
       if (id !== undefined && id !== null) out[connectKey] = id
-      // Kolom gambar setting bisa terbaca sebagai `image` murni (bukan
-      // `imageMedia`) tergantung penamaan kolom backend. Lengkapi bila kosong.
-      if (entityKey === 'settings' && field === 'image' && !out[field]) {
-        const fallback = (row.image as { id?: number; url?: string }) ?? null
-        out[field] = mediaUrl(fallback)
-        const fallbackId = row.imageId ?? fallback?.id
-        if (fallbackId !== undefined && fallbackId !== null) out[connectKey] = fallbackId
-      }
+    } else if (def.kind === 'gallery') {
+      // Setiap baris galeri berupa join: { id, mediaId, media: { id, url } }.
+      // `id` di array adalah id baris galeri, BUKAN id berkas; yang jadi acuan
+      // hapus/pakai ialah id di dalam objek `media` (`media.id`).
+      const raw = resolvePath(row, def.api)
+      const items = Array.isArray(raw) ? raw : []
+      out[field] = items.map((item) => {
+        const entry = item as { id?: number; mediaId?: number; media?: { id?: number; url?: string } | null } | null
+        const media = entry?.media ?? null
+        // Utamakan id yang ada di dalam `media`.
+        const mediaId = media?.id ?? entry?.mediaId ?? null
+        return { id: mediaId, mediaId, url: mediaUrl(media) }
+      })
     } else if (entityKey === 'settings' && field === 'phone') {
       // API mengirim string tunggal, form memakai repeater (array).
       const phone = row[def.api]
@@ -247,6 +253,20 @@ export function buildPayload(entityKey: string, form: Record<string, unknown>): 
         const connectId = form[connectKey]
         if (connectId !== undefined && connectId !== null && connectId !== '') {
           set(connectKey, connectId)
+        }
+      }
+    } else if (def.kind === 'gallery') {
+      // Galeri: tiap item bisa File (unggahan baru) atau objek media lama.
+      // Keduanya dikirim berulang pada key yang sama supaya backend menerima
+      // daftar media, bukan satu nilai tunggal.
+      const fileKey = def.file ?? 'galleryMedia'
+      const connectKey = def.connect ?? `${def.api}Id`
+      const list = Array.isArray(value) ? value : []
+      for (const item of list) {
+        if (item instanceof File) {
+          fd.append(fileKey, item)
+        } else if (item && typeof item === 'object' && (item as { id?: unknown }).id != null) {
+          fd.append(connectKey, String((item as { id?: unknown }).id))
         }
       }
     } else if (def.kind === 'bool') {

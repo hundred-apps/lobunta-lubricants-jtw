@@ -47,7 +47,8 @@ export const API_RESOURCE: Record<string, string> = {
   services: 'service',
   articles: 'post',
   customers: 'customer',
-  'admin-users': 'admin-user'
+  'admin-users': 'admin-user',
+  media: 'media'
 }
 
 export function useAdminApi() {

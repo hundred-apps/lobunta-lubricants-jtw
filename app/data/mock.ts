@@ -49,8 +49,9 @@ export const mockSettings: SiteSettings = {
     en: 'Monday - Friday, 08.00 - 17.00 WIB'
   },
   logo: '/img/logo.svg',
-  image: '/img/profile-hero.svg',
+  profile: '/img/profile-hero.svg',
   companyProfile: '',
+  gallery: [],
   social: {
     facebook: '',
     instagram: '',

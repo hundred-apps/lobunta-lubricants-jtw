@@ -108,8 +108,8 @@ const selectModel = computed<string>({
   },
 });
 
-/** Proxy untuk field gallery: komponennya hanya menerima string[]. */
-const galleryModel = computed<string[]>({
+/** Proxy untuk field gallery: komponennya menerima array item. */
+const galleryModel = computed<unknown[]>({
   get: () => (Array.isArray(current.value) ? current.value : []),
   set: (value) => {
     current.value = value;
@@ -485,6 +485,7 @@ function abs(url: string): string {
       v-else-if="field.kind === 'gallery'"
       v-model="galleryModel"
       :label="field.label"
+      :max="field.max"
       :disabled="disabled"
     />
 

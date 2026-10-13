@@ -122,8 +122,13 @@ function mapSettings(row: Record<string, unknown>, media: (v: unknown) => string
     email: String(row.email || ''),
     officeHours: loc(row.officeHoursId, row.officeHoursEn),
     logo: media(logo),
-    image: media(row.imageMedia ?? row.image),
+    profile: media(row.profileMedia ?? row.imageMedia ?? row.image),
     companyProfile: media(row.companyProfileMedia),
+    gallery: Array.isArray(row.galleryImages)
+      ? (row.galleryImages as Array<{ media?: unknown; mediaId?: number } | null>)
+        .map((item) => media(item?.media))
+        .filter(Boolean)
+      : [],
     social: {},
     menuVisibility: {}
   }

@@ -36,8 +36,9 @@ export interface SiteSettings {
   email: string
   officeHours: Localized
   logo: string
-  image: string
+  profile: string
   companyProfile: string
+  gallery: string[]
   social: {
     facebook?: string
     instagram?: string

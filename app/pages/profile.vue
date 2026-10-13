@@ -1,45 +1,66 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import type { HomeContent, ServiceItem } from '~/types/content'
+import { useI18n } from "vue-i18n";
+import type { HomeContent, ServiceItem } from "~/types/content";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const { data: settings } = await useCompany()
-const { data: home } = await useCms<HomeContent>('home', 'home')
-const { data: services } = await useCms<ServiceItem[]>('services', 'all')
+const { data: settings } = await useCompany();
+const { data: home } = await useCms<HomeContent>("home", "home");
+const { data: services } = await useCms<ServiceItem[]>("services", "all");
 
 const stats = computed(() => {
-  const s = settings.value
-  if (!s) return []
+  const s = settings.value;
+  if (!s) return [];
   return [
-    { label: t('profile.founded'), value: s.foundedYear || '—' },
-    { label: t('profile.agency'), value: s.agencyNumber || '—' },
-    { label: t('profile.categories'), value: String(home.value?.categories?.length ?? 0) },
-    { label: t('profile.customers'), value: String(home.value?.customers?.length ?? 0) }
-  ]
-})
+    { label: t("profile.founded"), value: s.foundedYear || "—" },
+    { label: t("profile.agency"), value: s.agencyNumber || "—" },
+    {
+      label: t("profile.categories"),
+      value: String(home.value?.categories?.length ?? 0),
+    },
+    {
+      label: t("profile.customers"),
+      value: String(home.value?.customers?.length ?? 0),
+    },
+  ];
+});
 
 const values = computed(() => [
-  { icon: 'shield', label: t('profile.value1') },
-  { icon: 'delivery', label: t('profile.value2') },
-  { icon: 'target', label: t('profile.value3') },
-  { icon: 'truck', label: t('profile.value4') },
-  { icon: 'gear', label: t('profile.value5') },
-  { icon: 'engineer', label: t('profile.value6') }
-])
+  { icon: "shield", label: t("profile.value1") },
+  { icon: "delivery", label: t("profile.value2") },
+  { icon: "target", label: t("profile.value3") },
+  { icon: "truck", label: t("profile.value4") },
+  { icon: "gear", label: t("profile.value5") },
+  { icon: "engineer", label: t("profile.value6") },
+]);
 
 const whatsappLink = computed(() => {
-  const number = (settings.value?.whatsapp || '').replace(/[^0-9]/g, '')
-  return `https://wa.me/${number}?text=${encodeURIComponent('Halo, saya ingin menerima company profile dalam format PDF.')}`
-})
+  const number = (settings.value?.whatsapp || "").replace(/[^0-9]/g, "");
+  return `https://wa.me/${number}?text=${encodeURIComponent(
+    "Halo, saya ingin menerima company profile dalam format PDF."
+  )}`;
+});
 
-const heroImage = computed(() => settings.value?.image || '/img/profile-hero.svg')
-const companyProfileUrl = computed(() => settings.value?.companyProfile || '')
+const heroImage = computed(
+  () => settings.value?.profile || "/img/profile-hero.svg"
+);
+const companyProfileUrl = computed(() => settings.value?.companyProfile || "");
+const gallery = computed(() => settings.value?.gallery ?? []);
+
+console.log("gallery", gallery.value);
 
 useSeoMeta({
-  title: () => `${t('nav.profile')} | ${pick(settings.value?.companyName ?? { id: 'Lobunta Lubricants', en: 'Lobunta Lubricants' })}`,
-  description: () => pick(settings.value?.description ?? { id: '', en: '' }) || t('meta.homeDescription')
-})
+  title: () =>
+    `${t("nav.profile")} | ${pick(
+      settings.value?.companyName ?? {
+        id: "Lobunta Lubricants",
+        en: "Lobunta Lubricants",
+      }
+    )}`,
+  description: () =>
+    pick(settings.value?.description ?? { id: "", en: "" }) ||
+    t("meta.homeDescription"),
+});
 </script>
 
 <template>
@@ -53,9 +74,17 @@ useSeoMeta({
 
     <section v-if="stats.length" class="relative z-10 -mt-8">
       <div class="container-page">
-        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 shadow-card dark:border-white/10 dark:bg-white/10 lg:grid-cols-4">
-          <div v-for="stat in stats" :key="stat.label" class="bg-white p-6 text-center dark:bg-brand-900/60">
-            <p class="font-display text-2xl font-black text-brand-600 dark:text-brand-300 sm:text-3xl">
+        <div
+          class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 shadow-card dark:border-white/10 dark:bg-white/10 lg:grid-cols-4"
+        >
+          <div
+            v-for="stat in stats"
+            :key="stat.label"
+            class="bg-white p-6 text-center dark:bg-brand-900/60"
+          >
+            <p
+              class="font-display text-2xl font-black text-brand-600 dark:text-brand-300 sm:text-3xl"
+            >
               {{ stat.value }}
             </p>
             <p class="mt-1 text-xs uppercase tracking-wider text-ink-mute">
@@ -67,32 +96,34 @@ useSeoMeta({
     </section>
 
     <section class="section">
-      <div class="container-page grid gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:items-start">
+      <div
+        class="container-page grid gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:items-start"
+      >
         <div>
           <UiSectionHeading
             :eyebrow="$t('nav.profile')"
             :heading="$t('profile.aboutTitle')"
           />
           <div class="prose-lkr mt-6 space-y-4 text-base sm:text-lg">
-            <p>{{ settings ? pick(settings.description) : '' }}</p>
+            <p>{{ settings ? pick(settings.description) : "" }}</p>
           </div>
 
           <dl v-if="settings" class="not-prose mt-8 grid gap-4 sm:grid-cols-3">
             <div class="card p-5">
               <dt class="text-xs uppercase tracking-wider text-ink-mute">
-                {{ $t('profile.legalName') }}
+                {{ $t("profile.legalName") }}
               </dt>
               <dd class="mt-1 font-medium">{{ settings.legalName }}</dd>
             </div>
             <div class="card p-5">
               <dt class="text-xs uppercase tracking-wider text-ink-mute">
-                {{ $t('profile.agency') }}
+                {{ $t("profile.agency") }}
               </dt>
               <dd class="mt-1 font-medium">{{ settings.agencyNumber }}</dd>
             </div>
             <div class="card p-5">
               <dt class="text-xs uppercase tracking-wider text-ink-mute">
-                {{ $t('profile.founded') }}
+                {{ $t("profile.founded") }}
               </dt>
               <dd class="mt-1 font-medium">{{ settings.foundedYear }}</dd>
             </div>
@@ -101,11 +132,17 @@ useSeoMeta({
 
         <aside v-if="services.length" class="card p-6">
           <h2 class="text-lg">
-            {{ $t('profile.businessLines') }}
+            {{ $t("profile.businessLines") }}
           </h2>
           <ul class="mt-5 space-y-4">
-            <li v-for="service in services.slice(0, 6)" :key="service.id" class="flex items-start gap-3">
-              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
+            <li
+              v-for="service in services.slice(0, 6)"
+              :key="service.id"
+              class="flex items-start gap-3"
+            >
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+              >
                 <UiIcon :name="service.icon || 'gear'" :size="20" />
               </span>
               <div>
@@ -123,7 +160,9 @@ useSeoMeta({
     </section>
 
     <section v-if="home.milestones.length" class="section section-alt">
-      <div class="container-page grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+      <div
+        class="container-page grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start"
+      >
         <UiSectionHeading
           :eyebrow="$t('nav.profile')"
           :heading="pick(home.aboutIntro.heading)"
@@ -141,8 +180,14 @@ useSeoMeta({
           :body="$t('profile.valuesBody')"
         />
         <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <div v-for="item in values" :key="item.label" class="card p-6 transition hover:-translate-y-1 hover:shadow-lg">
-            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
+          <div
+            v-for="item in values"
+            :key="item.label"
+            class="card p-6 transition hover:-translate-y-1 hover:shadow-lg"
+          >
+            <span
+              class="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+            >
               <UiIcon :name="item.icon" :size="22" />
             </span>
             <h3 class="mt-5 text-base">
@@ -153,27 +198,50 @@ useSeoMeta({
       </div>
     </section>
 
+    <section v-if="gallery.length" class="section section-alt">
+      <div class="container-page">
+        <UiSectionHeading
+          align="center"
+          :heading="$t('profile.galleryTitle')"
+          :body="$t('profile.galleryBody')"
+        />
+        <div class="mx-auto mt-10 max-w-4xl">
+          <GalleryCarousel :images="gallery" />
+        </div>
+      </div>
+    </section>
+
     <section v-if="settings" class="section section-alt">
-      <div class="container-page grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+      <div
+        class="container-page grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start"
+      >
         <div>
           <UiSectionHeading :heading="$t('profile.contactTitle')" />
           <div class="mt-8 grid gap-5 sm:grid-cols-2">
             <div class="card flex gap-4 p-5">
-              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+              >
                 <UiIcon name="map-pin" :size="20" />
               </span>
               <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">{{ $t('common.address') }}</p>
+                <p class="text-xs uppercase tracking-wider text-ink-mute">
+                  {{ $t("common.address") }}
+                </p>
                 <p class="mt-1 text-sm">{{ pick(settings.address) }}</p>
               </div>
             </div>
 
             <div class="card flex gap-4 p-5">
-              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+              >
                 <UiIcon name="phone" :size="20" />
               </span>
               <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">{{ $t('common.callUs') }}</p>
+                <p class="text-xs uppercase tracking-wider text-ink-mute">
+                  {{ $t("common.callUs") }}
+                </p>
                 <p class="mt-1 space-y-1">
                   <a
                     v-for="phone in settings.phone"
@@ -188,23 +256,34 @@ useSeoMeta({
             </div>
 
             <div class="card flex gap-4 p-5">
-              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+              >
                 <UiIcon name="mail" :size="20" />
               </span>
               <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">{{ $t('common.email') }}</p>
-                <a :href="`mailto:${settings.email}`" class="mt-1 block text-sm font-medium text-brand-700 hover:underline dark:text-brand-300">
+                <p class="text-xs uppercase tracking-wider text-ink-mute">
+                  {{ $t("common.email") }}
+                </p>
+                <a
+                  :href="`mailto:${settings.email}`"
+                  class="mt-1 block text-sm font-medium text-brand-700 hover:underline dark:text-brand-300"
+                >
                   {{ settings.email }}
                 </a>
               </div>
             </div>
 
             <div class="card flex gap-4 p-5">
-              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+              >
                 <UiIcon name="clock" :size="20" />
               </span>
               <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">{{ $t('common.openHours') }}</p>
+                <p class="text-xs uppercase tracking-wider text-ink-mute">
+                  {{ $t("common.openHours") }}
+                </p>
                 <p class="mt-1 text-sm">{{ pick(settings.officeHours) }}</p>
               </div>
             </div>
@@ -213,11 +292,15 @@ useSeoMeta({
 
         <div class="card flex flex-col justify-between p-6">
           <div>
-            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300">
+            <span
+              class="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+            >
               <UiIcon name="document" :size="22" />
             </span>
-            <h3 class="mt-5 text-lg">{{ $t('common.downloadProfile') }}</h3>
-            <p class="prose-lkr mt-2 text-sm">{{ $t('profile.downloadBody') }}</p>
+            <h3 class="mt-5 text-lg">{{ $t("common.downloadProfile") }}</h3>
+            <p class="prose-lkr mt-2 text-sm">
+              {{ $t("profile.downloadBody") }}
+            </p>
           </div>
           <a
             v-if="companyProfileUrl"
@@ -227,11 +310,17 @@ useSeoMeta({
             class="btn-primary mt-6 w-full"
           >
             <UiIcon name="document" :size="18" />
-            {{ $t('common.downloadProfile') }}
+            {{ $t("common.downloadProfile") }}
           </a>
-          <a v-else :href="whatsappLink" target="_blank" rel="noopener" class="btn-primary mt-6 w-full">
+          <a
+            v-else
+            :href="whatsappLink"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary mt-6 w-full"
+          >
             <UiIcon name="whatsapp" filled :size="18" />
-            {{ $t('career.requestProfile') }}
+            {{ $t("career.requestProfile") }}
           </a>
         </div>
       </div>

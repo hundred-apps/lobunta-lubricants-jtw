@@ -120,7 +120,9 @@
     "value4": "On-time delivery",
     "value5": "Nationwide distribution",
     "value6": "Technical support",
-    "downloadBody": "Request the complete company profile document for partnership and procurement needs."
+    "downloadBody": "Request the complete company profile document for partnership and procurement needs.",
+    "galleryTitle": "Gallery",
+    "galleryBody": "A glimpse of our operations, distribution, and technical support."
   },
   "contact": {
     "title": "Contact",

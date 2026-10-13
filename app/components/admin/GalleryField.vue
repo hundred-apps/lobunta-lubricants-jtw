@@ -1,194 +1,250 @@
 <script setup lang="ts">
 /**
  * Galeri multi-gambar untuk field 'gallery'.
- * Value: string[] (array of image URLs)
+ *
+ * Backend LKR tidak punya endpoint unggah terpisah: berkas dikirim sebagai
+ * multipart pada request `-create`. Jadi nilai yang disimpan berupa campuran
+ * media lama ({ id, url }) dan File baru, dan useAdminApi/buildPayload yang
+ * mengirimnya.
  */
 
+export interface GalleryItem {
+  id?: number | null
+  mediaId?: number | null
+  url: string
+}
+
 const props = defineProps<{
-  modelValue?: string[]
+  modelValue?: unknown[] | GalleryItem[] | File[]
   label?: string
   disabled?: boolean
+  /** Jumlah maksimal foto. */
+  max?: number
 }>()
 
-const emit = defineEmits<{ 'update:modelValue': [value: string[]] }>()
+const emit = defineEmits<{ 'update:modelValue': [value: unknown] }>()
 
-const { list, upload, connected, lastError } = useAdminApi()
+const { remove: deleteMedia, lastError } = useAdminApi()
 
-const open = ref(false)
-const items = ref<Array<{ id: number; url: string; fileName?: string }>>([])
-const loading = ref(false)
-const uploading = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
+/** Pratinjau berkas baru, dikunci ke objek File-nya (bukan ke posisi). */
+const objectUrls = ref<Map<File, string>>(new Map())
+/** Index foto yang sedang diminta konfirmasi hapus. */
+const pendingIndex = ref<number | null>(null)
+const deleting = ref(false)
+/** Respons terakhir dari media-delete. */
+const response = ref<{ type: 'ok' | 'error'; text: string } | null>(null)
 
 const previewBase = computed(() => {
   const config = useRuntimeConfig()
-  return String(config.public.apiBase || '').replace(/\/api\/v1\/?$/, '')
+  return String(config.public.apiBase || '').replace(/\/+$/, '').replace(/\/api\/v1\/?$/, '')
 })
 
-const current = computed<string[]>({
-  get: () => props.modelValue || [],
-  set: (value) => emit('update:modelValue', value)
-})
+const max = computed(() => props.max ?? 10)
+
+const current = computed(() => (Array.isArray(props.modelValue) ? props.modelValue : []))
+
+const isFile = (item: unknown): item is File => item instanceof File
+
+const isFull = computed(() => current.value.length >= max.value)
 
 function abs(url: string): string {
   if (!url) return ''
   if (/^https?:\/\//.test(url)) return url
-  const base = previewBase.value.replace(/\/api\/v1\/?$/, '')
+  const base = previewBase.value.replace(/\/+$/, '')
   return base ? `${base}${url.startsWith('/') ? '' : '/'}${url}` : url
 }
 
-async function load() {
-  loading.value = true
-  const result = await list<{ id: number; url: string; fileName?: string }>('media', { limit: 100 })
-  items.value = result.data
-  loading.value = false
+function urlOf(item: unknown): string {
+  if (isFile(item)) return ''
+  return typeof item === 'string' ? item : String((item as GalleryItem)?.url || '')
 }
 
-async function openPicker() {
-  open.value = true
-  await load()
+function previewOf(item: unknown): string {
+  if (isFile(item)) return objectUrls.value.get(item) || ''
+  return abs(urlOf(item))
 }
 
-function pick(url: string) {
-  current.value = [...current.value, url]
-  open.value = false
+function set(items: unknown[]) {
+  emit('update:modelValue', items)
 }
 
-function removeImage(url: string) {
-  current.value = current.value.filter((u) => u !== url)
-}
-
-async function onFilePicker(event: Event) {
+function onFile(event: Event) {
   const input = event.target as HTMLInputElement
-  const files = Array.from(input.files || [])
-  if (!files.length) return
-  
-  uploading.value = true
-  for (const file of files) {
-    const result = await upload(file)
-    if (result?.url) {
-      current.value = [...current.value, result.url]
-    }
+  const picked = Array.from(input.files || [])
+  input.value = ''
+  if (!picked.length || isFull.value) return
+  const room = max.value - current.value.length
+  const added = picked.slice(0, room)
+  for (const file of added) objectUrls.value.set(file, URL.createObjectURL(file))
+  set([...current.value, ...added])
+}
+
+function releasePreview(item: unknown) {
+  if (!isFile(item)) return
+  const url = objectUrls.value.get(item)
+  if (url) URL.revokeObjectURL(url)
+  objectUrls.value.delete(item)
+}
+
+function dropItem(index: number) {
+  const item = current.value[index]
+  if (item) releasePreview(item)
+  set(current.value.filter((_, i) => i !== index))
+}
+
+function askRemove(index: number) {
+  pendingIndex.value = index
+  response.value = null
+}
+
+function cancelRemove() {
+  pendingIndex.value = null
+}
+
+/** Id media (id di dalam `media`) dari sebuah item galeri. */
+function mediaIdOf(item: unknown): number | null {
+  if (isFile(item)) return null
+  if (typeof item === 'string') return null
+  const entry = item as GalleryItem
+  const id = entry?.mediaId ?? entry?.id ?? null
+  return typeof id === 'number' ? id : null
+}
+
+async function applyRemove() {
+  const index = pendingIndex.value
+  if (index === null) return
+  const item = current.value[index]
+  const mediaId = mediaIdOf(item)
+  pendingIndex.value = null
+  // Foto yang baru dipilih belum punya media di backend: cukup dilepas.
+  if (mediaId === null) {
+    dropItem(index)
+    return
   }
-  uploading.value = false
-  if (input) input.value = ''
-  await load()
+  // Foto lama langsung dihapus dari backend, responsnya ditampilkan.
+  deleting.value = true
+  const ok = await deleteMedia('media', mediaId)
+  deleting.value = false
+  response.value = ok
+    ? { type: 'ok', text: `Foto dihapus (media ${mediaId}).` }
+    : { type: 'error', text: lastError.value || `Gagal menghapus foto (media ${mediaId}).` }
+  // Hanya lepas dari daftar kalau benar-benar terhapus di backend.
+  if (ok) dropItem(index)
 }
 
 function moveUp(index: number) {
   if (index === 0) return
-  const next = [...current.value] as string[]
-  const item = next.splice(index, 1)[0] as string
+  const next = [...current.value]
+  const item = next.splice(index, 1)[0]!
   next.splice(index - 1, 0, item)
-  current.value = next
+  set(next)
 }
 
 function moveDown(index: number) {
   if (index >= current.value.length - 1) return
-  const next = [...current.value] as string[]
-  const item = next.splice(index, 1)[0] as string
+  const next = [...current.value]
+  const item = next.splice(index, 1)[0]!
   next.splice(index + 1, 0, item)
-  current.value = next
+  set(next)
 }
+
+onBeforeUnmount(() => {
+  objectUrls.value.forEach((url) => URL.revokeObjectURL(url))
+  objectUrls.value.clear()
+})
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="space-y-3">
     <div v-if="current.length" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       <div
-        v-for="(url, index) in current"
+        v-for="(item, index) in current"
         :key="index"
         class="relative group"
       >
         <div class="aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/5">
-          <img :src="abs(url)" :alt="`Gallery ${index + 1}`" class="h-full w-full object-cover">
+          <img :src="previewOf(item)" :alt="`${label || 'Galeri'} ${index + 1}`" class="h-full w-full object-cover">
         </div>
-        <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            type="button"
-            class="btn-ghost !p-1.5 rounded-full bg-white/90 dark:bg-brand-900/90"
-            :disabled="disabled || index === 0"
-            @click="moveUp(index)"
-            title="Geser ke atas"
-          >
-            <UiIcon name="arrow-right" :size="14" style="transform: rotate(-90deg)" />
-          </button>
-          <button
-            type="button"
-            class="btn-ghost !p-1.5 rounded-full bg-white/90 dark:bg-brand-900/90"
-            :disabled="disabled || index >= current.length - 1"
-            @click="moveDown(index)"
-            title="Geser ke bawah"
-          >
-            <UiIcon name="arrow-right" :size="14" style="transform: rotate(90deg)" />
-          </button>
-          <button
-            type="button"
-            class="btn-ghost !p-1.5 rounded-full bg-white/90 dark:bg-brand-900/90 text-red-600"
-            :disabled="disabled"
-            @click="removeImage(url)"
-            title="Hapus"
-          >
+
+        <div class="absolute inset-x-1 top-1 flex items-start justify-between gap-1 opacity-0 transition group-hover:opacity-100">
+          <div class="flex gap-1 rounded-full bg-white/90 p-1 dark:bg-brand-900/90">
+            <button type="button" class="text-slate-600 dark:text-slate-300" :disabled="disabled || index === 0" title="Geser ke kiri" @click="moveUp(index)">
+              <UiIcon name="arrow-right" :size="14" style="transform: rotate(180deg)" />
+            </button>
+            <button type="button" class="text-slate-600 dark:text-slate-300" :disabled="disabled || index >= current.length - 1" title="Geser ke kanan" @click="moveDown(index)">
+              <UiIcon name="arrow-right" :size="14" />
+            </button>
+          </div>
+          <button type="button" class="rounded-full bg-white/90 p-1 text-red-600 dark:bg-brand-900/90" :disabled="disabled" title="Hapus" @click="askRemove(index)">
             <UiIcon name="close" :size="14" />
           </button>
         </div>
+
+        <span
+          v-if="isFile(item)"
+          class="absolute bottom-1 left-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-medium text-white"
+        >
+          Baru
+        </span>
       </div>
 
       <button
-        v-if="current.length < 20"
+        v-if="!isFull"
         type="button"
-        class="btn-outline !py-3 aspect-square flex flex-col items-center justify-center gap-1"
+        class="btn-outline flex aspect-square flex-col items-center justify-center gap-1 !py-3"
         :disabled="disabled"
         @click="fileInput?.click()"
       >
         <UiIcon name="download" :size="20" />
-        <span class="text-xs">Tambah gambar</span>
+        <span class="text-xs">Tambah foto</span>
       </button>
     </div>
 
-    <div v-else class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center dark:border-white/10">
+    <div v-else class="rounded-xl border-2 border-dashed border-slate-300 p-8 text-center dark:border-white/10">
       <UiIcon name="document" :size="32" class="mx-auto text-slate-400" />
-      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Belum ada gambar</p>
-      <button
-        type="button"
-        class="btn-outline mt-3"
-        :disabled="disabled"
-        @click="fileInput?.click()"
-      >
-        Upload gambar pertama
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Belum ada foto</p>
+      <button type="button" class="btn-outline mt-3" :disabled="disabled" @click="fileInput?.click()">
+        Pilih foto
       </button>
     </div>
 
-    <input ref="fileInput" type="file" accept="image/*" multiple class="hidden" @change="onFilePicker">
+    <p class="text-xs text-slate-500">
+      {{ current.length }} dari maksimal {{ max }} foto.
+    </p>
+
+    <p
+      v-if="response"
+      class="rounded-lg px-3 py-2 text-xs"
+      :class="response.type === 'ok'
+        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'
+        : 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-300'"
+      role="status"
+    >
+      {{ response.text }}
+    </p>
+    <p v-else-if="deleting" class="text-xs text-slate-500">
+      Menghapus foto...
+    </p>
+
+    <input ref="fileInput" type="file" accept="image/*" multiple class="hidden" @change="onFile">
 
     <Teleport to="body">
-      <div v-if="open" class="fixed inset-0 z-50 grid place-items-center bg-slate-900/60 p-4">
-        <div class="max-h-[80vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-brand-950">
-          <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-white/10">
-            <h3 class="text-base font-semibold">Pilih dari media library</h3>
-            <button type="button" class="btn-ghost !px-3 !py-2" @click="open = false">
-              <UiIcon name="close" :size="18" />
+      <div v-if="pendingIndex !== null" class="fixed inset-0 z-50 grid place-items-center bg-slate-900/60 p-4">
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-brand-950">
+          <h2 class="text-lg">
+            Hapus foto ini?
+          </h2>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            Foto akan dihapus dari galeri dan berkasnya dihapus dari server.
+          </p>
+          <div class="mt-6 flex justify-end gap-2">
+            <button type="button" class="btn-outline" :disabled="deleting" @click="cancelRemove">
+              Batal
             </button>
-          </div>
-          <div class="max-h-[60vh] overflow-y-auto p-5">
-            <p v-if="loading" class="text-sm text-slate-500">Memuat...</p>
-            <p v-else-if="!items.length" class="text-sm text-slate-500">Belum ada media. Gunakan tombol Upload.</p>
-            <div v-else class="grid grid-cols-3 gap-3 sm:grid-cols-5">
-              <button
-                v-for="item in items"
-                :key="item.id"
-                type="button"
-                class="grid aspect-square place-items-center overflow-hidden rounded-lg border transition hover:border-brand-500"
-                :class="current.includes(item.url) ? 'border-brand-600 ring-2 ring-brand-500/30' : 'border-slate-200 dark:border-white/10'"
-                @click="pick(item.url)"
-                :disabled="current.includes(item.url)"
-              >
-                <img :src="abs(item.url)" :alt="item.fileName || item.url" class="h-full w-full object-contain">
-                <span v-if="current.includes(item.url)" class="absolute inset-0 flex items-center justify-center bg-brand-700/50 text-white">
-                  <UiIcon name="check" :size="24" />
-                </span>
-              </button>
-            </div>
+            <button type="button" class="btn-accent" :disabled="deleting" @click="applyRemove">
+              {{ deleting ? 'Menghapus...' : 'Ya, hapus' }}
+            </button>
           </div>
         </div>
       </div>

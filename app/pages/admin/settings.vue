@@ -3,7 +3,7 @@ import type { FieldDef } from '~/admin/types'
 
 definePageMeta({ layout: 'admin' })
 
-const { get, update, lastError } = useAdminApi()
+const { get, update, remove, lastError } = useAdminApi()
 
 const fields: FieldDef[] = [
   { name: 'companyName', label: 'Nama perusahaan', kind: 'text', bilingual: true, required: true },
@@ -19,7 +19,8 @@ const fields: FieldDef[] = [
   { name: 'officeHours', label: 'Jam operasional', kind: 'text', bilingual: true, required: true },
   { name: 'logo', label: 'Logo', kind: 'image', required: true, help: 'Wajib. Dipakai di header, footer, dan ikon tab browser (favicon).' },
   { name: 'companyProfile', label: 'Company profile', kind: 'image', help: 'Opsional. Berkas PDF profil perusahaan untuk diunduh di halaman profil.' },
-  { name: 'image', label: 'Gambar halaman profil', kind: 'image', help: 'Opsional. Gambar utama (hero) pada halaman profil.' }
+  { name: 'profile', label: 'Gambar halaman profil', kind: 'image', help: 'Opsional. Gambar utama (hero) pada halaman profil.' },
+  { name: 'gallery', label: 'Galeri foto', kind: 'gallery', max: 10, help: 'Maksimal 10 foto. Bisa diurutkan; foto tampil di halaman profil.' }
 ]
 
 const model = ref<Record<string, unknown>>({})
@@ -30,7 +31,7 @@ const notice = ref<{ type: 'ok' | 'error'; text: string } | null>(null)
 function defaults(): Record<string, unknown> {
   const result: Record<string, unknown> = {}
   for (const field of fields) {
-    result[field.name] = field.kind === 'repeater'
+    result[field.name] = field.kind === 'repeater' || field.kind === 'gallery'
       ? []
       : field.bilingual ? { id: '', en: '' } : field.kind === 'image' ? '' : ''
   }
