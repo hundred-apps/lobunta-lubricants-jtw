@@ -13,8 +13,7 @@ const groups = computed(() => [
     label: 'Umum',
     items: [
       { to: '/admin', label: 'Dashboard', icon: 'target' },
-      { to: '/admin/settings', label: 'Pengaturan situs', icon: 'gear' },
-      { to: '/admin/media', label: 'Media', icon: 'document' }
+      { to: '/admin/settings', label: 'Pengaturan situs', icon: 'gear' }
     ]
   },
   {
