@@ -102,7 +102,7 @@ useSeoMeta({
           </div>
         </div>
 
-        <ContactForm :settings="settings" />
+        <ContactForm />
       </div>
     </section>
 

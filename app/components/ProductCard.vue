@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ProductItem } from '~/types/content'
 
-defineProps<{ product: ProductItem; compact?: boolean }>()
+const props = defineProps<{ product: ProductItem; compact?: boolean }>()
 
 const { data: categories } = await useCms<import('~/types/content').ProductCategory[]>('product-categories', 'all')
 const { locale } = useI18n()
@@ -10,6 +10,19 @@ function categoryName(slug: string) {
   const found = categories.value.find((item) => item.slug === slug)
   return found ? pick(found.name) : ''
 }
+
+/** Batas karakter deskripsi yang tampil di kartu. */
+const PREVIEW_LIMIT = 200
+
+const description = computed(() => pick(props.product.description).trim())
+
+const descriptionPreview = computed(() =>
+  description.value.length > PREVIEW_LIMIT
+    ? `${description.value.slice(0, PREVIEW_LIMIT).trimEnd()}…`
+    : description.value
+)
+
+const hasMore = computed(() => description.value.length > PREVIEW_LIMIT)
 </script>
 
 <template>
@@ -36,9 +49,18 @@ function categoryName(slug: string) {
       <p v-if="product.sku" class="mt-1 font-mono text-xs text-ink-mute">
         {{ product.sku }}
       </p>
-      <p v-if="!compact" class="prose-lkr mt-3 flex-1 text-sm line-clamp-3">
-        {{ pick(product.description) }}
-      </p>
+      <div v-if="!compact && description" class="mt-3 flex-1">
+        <p class="prose-lkr text-sm">
+          {{ descriptionPreview }}
+        </p>
+        <span
+          v-if="hasMore"
+          class="mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-600 dark:text-brand-400"
+        >
+          {{ $t('products.seeMore') }}
+          <UiIcon name="arrow-right" :size="14" />
+        </span>
+      </div>
       <dl v-if="!compact && product.spec?.length" class="mt-4 space-y-1.5 border-t border-slate-100 pt-4 text-xs dark:border-white/10">
         <div v-for="spec in product.spec" :key="spec.label.en" class="flex justify-between gap-4">
           <dt class="text-ink-soft dark:text-slate-400">{{ pick(spec.label) }}</dt>

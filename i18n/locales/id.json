@@ -60,7 +60,8 @@
     "weight": "Berat/Volume",
     "specTitle": "Spesifikasi teknis",
     "relatedTitle": "Produk terkait",
-    "backToProducts": "Kembali ke produk"
+    "backToProducts": "Kembali ke produk",
+    "seeMore": "Lihat selengkapnya"
   },
   "services": {
     "title": "Layanan",

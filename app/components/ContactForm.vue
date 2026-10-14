@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import type { SiteSettings } from '~/types/content'
-
-const props = defineProps<{ settings?: SiteSettings | null }>()
-
 const { t } = useI18n()
 const { locale } = useI18n()
 
@@ -24,20 +20,6 @@ const errors = computed(() => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) list.push(t('contact.email'))
   if (!form.message.trim()) list.push(t('contact.message'))
   return list
-})
-
-const waHref = computed(() => {
-  if (!props.settings) return '#'
-  const text = [
-    `Nama: ${form.name || '-'}`,
-    `Email: ${form.email || '-'}`,
-    `Telepon: ${form.phone || '-'}`,
-    `Perusahaan: ${form.company || '-'}`,
-    `Perihal: ${form.subject || '-'}`,
-    '',
-    form.message
-  ].join('\n')
-  return whatsappLink(props.settings.whatsapp, text)
 })
 
 async function submit() {
@@ -113,10 +95,6 @@ async function submit() {
         <UiIcon name="check" :size="16" />
         {{ state === 'sending' ? $t('contact.sending') : $t('contact.submit') }}
       </button>
-      <a :href="waHref" target="_blank" rel="noopener" class="btn-outline">
-        <UiIcon name="whatsapp" :size="16" :filled="true" />
-        {{ $t('contact.orWa') }}
-      </a>
     </div>
 
     <p
