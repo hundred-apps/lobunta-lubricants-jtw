@@ -220,6 +220,8 @@ function mapCustomer(row: Record<string, unknown>, media: (v: unknown) => string
 }
 
 function mapService(row: Record<string, unknown>, media: (v: unknown) => string): ServiceItem {
+  const images = Array.isArray(row.images) ? row.images : []
+  const firstImage = (images[0] as { media?: { url?: string } } | undefined)?.media
   return {
     id: Number(row.id),
     slug: String(row.slug || ''),
@@ -229,7 +231,7 @@ function mapService(row: Record<string, unknown>, media: (v: unknown) => string)
     excerpt: loc(row.excerptId, row.excerptEn),
     body: locHtml(row.bodyId, row.bodyEn),
     highlights: { id: [], en: [] },
-    image: media(row.media),
+    image: media(firstImage || (row.media as { url?: string } | null)),
     featured: Boolean(row.featured)
   }
 }

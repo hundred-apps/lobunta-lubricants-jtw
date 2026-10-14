@@ -63,7 +63,7 @@ const MAPS: Record<string, Record<string, FieldMap>> = {
     icon: { api: 'icon', kind: 'plain' },
     excerpt: { api: 'excerpt', kind: 'bilingual' },
     body: { api: 'body', kind: 'bilingual' },
-    image: { api: 'media', kind: 'media', file: 'media', connect: 'mediaId' },
+    image: { api: 'images[0].media', kind: 'media', file: 'media', connect: 'mediaId' },
     featured: { api: 'featured', kind: 'bool' },
     order: { api: 'sortOrder', kind: 'number' }
   },
