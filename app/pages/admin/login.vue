@@ -4,6 +4,8 @@ const { saveToken } = useAdminAuth()
 const router = useRouter()
 const route = useRoute()
 
+useSeoMeta({ title: 'Masuk | CMS Lobunta' })
+
 const email = ref('')
 const password = ref('')
 const loading = ref(false)

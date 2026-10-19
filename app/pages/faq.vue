@@ -1,3 +1,3 @@
 <template>
-  <CmsPageView slug="faq" />
+  <StaticPage page="faq" />
 </template>

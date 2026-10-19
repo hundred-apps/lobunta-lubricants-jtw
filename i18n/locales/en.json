@@ -43,7 +43,12 @@
     "customersTitle": "Few of our customers",
     "blogTitle": "Latest articles",
     "promoTitle": "Promotions and programs",
-    "contactTitle": "Contact us"
+    "contactTitle": "Contact us",
+    "aboutHeading": "Our journey",
+    "aboutBody": "More than five decades of lubricant distribution experience in Indonesia, with official Pertamina Lubricants distributor status since 1991.",
+    "ctaHeading": "Need a lubricant recommendation for your machinery?",
+    "ctaBody": "Send us your machine type, operating conditions, and specifications. Our technical team will recommend the right grade.",
+    "ctaButton": "Contact Us"
   },
   "products": {
     "title": "Products",
@@ -159,8 +164,47 @@
     "privacy": "Privacy Policy",
     "official": "Authorized Pertamina Lubricants Distributor"
   },
+  "milestones": [
+    {
+      "year": "1973",
+      "title": "CV. Lobunta Kencana Raya",
+      "description": "CV. Lobunta Kencana Raya was established on 27 January 1973."
+    },
+    {
+      "year": "1977",
+      "title": "PT. Lobunta Kencana Raya",
+      "description": "The entity was converted to a limited liability company on 30 September 1977."
+    },
+    {
+      "year": "1991",
+      "title": "Official Pertamina Lubricants Distributor",
+      "description": "Appointed as an official Pertamina Lubricants distributor under Agency No. C 705106."
+    }
+  ],
+  "staticPages": {
+    "faq": {
+      "title": "FAQ — Lobunta Lubricants",
+      "heading": "Frequently asked questions",
+      "intro": "Some of the questions we most often receive from industrial customers.",
+      "body": "<details><summary>Are the products guaranteed genuine?</summary><p>Yes. We are an Authorized Distributor of Pertamina Lubricants under Agency No. C 705106, so all products are guaranteed genuine and sourced directly from Pertamina.</p></details>\n<details><summary>Is there a minimum order?</summary><p>There is no minimum order for retail purchases. For wholesale pricing and recurring supply contracts, please contact our team for a special quotation.</p></details>\n<details><summary>Which payment methods are available?</summary><p>We accept bank transfer and cash payment. For corporate customers, payment options can be arranged according to the contract agreement.</p></details>\n<details><summary>Can you deliver outside the city?</summary><p>Yes. We distribute products throughout Indonesia through logistics partners, with estimated delivery times adjusted to the destination.</p></details>\n<details><summary>Do you provide technical support?</summary><p>Yes. Our technical team is ready to help recommend the right lubricant grade for your machine type and operating conditions.</p></details>\n<details><summary>How do I get a price quotation?</summary><p>Send us your requirements through the Contact page or WhatsApp. Include product type, quantity, and delivery location for a faster response.</p></details>"
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "heading": "Privacy Policy",
+      "intro": "This page explains how Lobunta Lubricants collects, uses, and protects your personal data.",
+      "body": "<p><strong>Data we collect.</strong> We collect your name, phone number, email address, and messages you submit through the contact form or WhatsApp.</p>\n<p><strong>Use of data.</strong> This data is used only to answer inquiries, fulfil quotation requests, and process product orders.</p>\n<p><strong>Data sharing.</strong> We do not sell or rent your personal data to third parties.</p>\n<p><strong>Security.</strong> Data is stored on servers with restricted access and used only by authorised personnel.</p>\n<p><strong>Your rights.</strong> You may request access, correction, or deletion of your data by contacting us through the contact page.</p>"
+    },
+    "termsConditions": {
+      "title": "Terms & Conditions",
+      "heading": "Terms & Conditions",
+      "intro": "By using our services and conducting transactions with Lobunta Lubricants, you agree to the following terms and conditions.",
+      "body": "<p><strong>1. Scope.</strong> These terms and conditions govern the use of our site and the purchase of products and services from Lobunta Lubricants.</p>\n<p><strong>2. Orders.</strong> An order is valid once confirmed by our team, whether by email, phone, or WhatsApp.</p>\n<p><strong>3. Pricing.</strong> Listed prices may change at any time without prior notice. The final price follows the official quotation we send.</p>\n<p><strong>4. Payment.</strong> Payment is made according to the method and period agreed upon at order confirmation.</p>\n<p><strong>5. Delivery.</strong> Delivery times are estimates and may be affected by stock availability and third-party logistics services.</p>\n<p><strong>6. Product warranty.</strong> All products we sell are guaranteed genuine from Pertamina. Claims for damaged or non-conforming products must be submitted promptly after receipt.</p>\n<p><strong>7. Limitation of liability.</strong> We are not liable for indirect losses arising from the use of products contrary to our technical recommendations.</p>\n<p><strong>8. Governing law.</strong> These terms and conditions are governed by and construed in accordance with the laws applicable in the Republic of Indonesia.</p>"
+    }
+  },
   "meta": {
     "homeTitle": "Lobunta Lubricants - Official Pertamina Oil and Lubricants Distributor",
-    "homeDescription": "Official Pertamina Lubricants distributor since 1991 under Agency No. C 705106. Genuine products, ready stock, competitive pricing, and technical support for industry."
+    "homeDescription": "Official Pertamina Lubricants distributor since 1991 under Agency No. C 705106. Genuine products, ready stock, competitive pricing, and technical support for industry.",
+    "blogTitle": "Blog & Articles | Lobunta Lubricants",
+    "blogDescription": "Insights, tips, and the latest news on lubricants, industry, and technology."
   }
 }

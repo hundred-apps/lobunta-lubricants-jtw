@@ -6,7 +6,7 @@
  * payload saat dibuat/diubah. Mengikuti dokumentasi Postman LKR JTW LUBRICANTS.
  */
 
-type Kind = 'bilingual' | 'media' | 'plain' | 'bool' | 'number' | 'gallery'
+type Kind = 'bilingual' | 'mono' | 'media' | 'plain' | 'bool' | 'number' | 'gallery' | 'tags' | 'publish'
 
 interface FieldMap {
   /**
@@ -54,7 +54,7 @@ const MAPS: Record<string, Record<string, FieldMap>> = {
     image: { api: 'images[0].media', kind: 'media', file: 'media', connect: 'mediaId' },
     tdsFile: { api: 'tdsMedia', kind: 'media', file: 'tdsMedia', connect: 'tdsMediaId' },
     msdsFile: { api: 'msdsMedia', kind: 'media', file: 'msdsMedia', connect: 'msdsMediaId' },
-    status: { api: 'status', kind: 'plain' },
+    status: { api: 'status', kind: 'publish' },
     order: { api: 'sortOrder', kind: 'number' }
   },
   services: {
@@ -88,16 +88,18 @@ const MAPS: Record<string, Record<string, FieldMap>> = {
     title: { api: 'title', kind: 'bilingual' },
     slug: { api: 'slug', kind: 'plain' },
     excerpt: { api: 'excerpt', kind: 'bilingual' },
-    body: { api: 'body', kind: 'bilingual' },
+    // Isi artikel diedit lewat satu editor (bukan dua bahasa), lalu disalin ke
+    // bodyId dan bodyEn agar halaman Inggris tidak kosong.
+    body: { api: 'body', kind: 'mono' },
     author: { api: 'author', kind: 'plain' },
     category: { api: 'category', kind: 'bilingual' },
-    tags: { api: 'tags', kind: 'plain' },
+    tags: { api: 'tags', kind: 'tags' },
     width: { api: 'width', kind: 'number' },
     height: { api: 'height', kind: 'number' },
     alt: { api: 'alt', kind: 'bilingual' },
     coverMedia: { api: 'coverMedia', kind: 'media', file: 'coverMedia', connect: 'coverMediaId' },
     publishedAt: { api: 'publishedAt', kind: 'plain' },
-    status: { api: 'status', kind: 'plain' }
+    status: { api: 'status', kind: 'publish' }
   },
   customers: {
     name: { api: 'name', kind: 'plain' },
@@ -142,6 +144,24 @@ function mediaUrl(source: unknown): string {
   if (/^https?:\/\//.test(url)) return url
   const base = String(useRuntimeConfig().public.apiBase || '').replace(/\/+$/, '').replace(/\/api$/, '')
   return `${base}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+/**
+ * Ubah nilai `tags` dari API (JSON string `["a","b"]`) atau bentuk lain
+ * (array / string koma) menjadi daftar string untuk form admin.
+ */
+function toTagList(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map((v) => String(v)).filter(Boolean)
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value)
+      if (Array.isArray(parsed)) return parsed.map((v) => String(v)).filter(Boolean)
+    } catch {
+      // bukan JSON: perlakukan sebagai daftar dipisah koma.
+    }
+    return value.split(',').map((s) => s.trim()).filter(Boolean)
+  }
+  return []
 }
 
 /** API row -> bentuk form admin. */
@@ -190,6 +210,15 @@ export function normalizeRow(entityKey: string, row: Record<string, unknown>): R
       // API mengirim string tunggal, form memakai repeater (array).
       const phone = row[def.api]
       out[field] = Array.isArray(phone) ? phone : (phone ? [phone] : [])
+    } else if (def.kind === 'tags') {
+      // API mengirim tags sebagai JSON string; form memakai daftar string.
+      out[field] = toTagList(row[def.api])
+    } else if (def.kind === 'publish') {
+      // API memakai 'published'/'draft'; form memakai toggle boolean.
+      out[field] = row[def.api] === 'published'
+    } else if (def.kind === 'mono') {
+      // Satu nilai untuk kedua bahasa: tampilkan sisi Indonesia.
+      out[field] = row[`${def.api}Id`] ?? row[def.api] ?? ''
     } else {
       out[field] = row[def.api]
     }
@@ -271,6 +300,17 @@ export function buildPayload(entityKey: string, form: Record<string, unknown>): 
       }
     } else if (def.kind === 'bool') {
       set(def.api, value ? 'true' : 'false')
+    } else if (def.kind === 'tags') {
+      // Backend menyimpan tags sebagai JSON string, mis. `["oli","diesel"]`.
+      set(def.api, JSON.stringify(toTagList(value)))
+    } else if (def.kind === 'mono') {
+      // Satu nilai editor -> salin ke kedua bahasa (bodyId & bodyEn, dll).
+      const text = value === null || value === undefined ? '' : String(value)
+      set(`${def.api}Id`, text)
+      set(`${def.api}En`, text)
+    } else if (def.kind === 'publish') {
+      // Toggle boolean -> 'published'/'draft' sesuai nilai yang dipakai backend.
+      set(def.api, value ? 'published' : 'draft')
     } else if (value !== undefined && value !== null && value !== '') {
       set(def.api, scalar(value))
     }

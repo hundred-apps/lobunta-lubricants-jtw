@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import type { HomeContent, ServiceItem } from "~/types/content";
 
 const { t } = useI18n();
+const milestones = useMilestones();
 
 const { data: settings } = await useCompany();
 const { data: home } = await useCms<HomeContent>("home", "home");
@@ -159,16 +160,16 @@ useSeoMeta({
       </div>
     </section>
 
-    <section v-if="home.milestones.length" class="section section-alt">
+    <section v-if="milestones.length" class="section section-alt">
       <div
         class="container-page grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start"
       >
         <UiSectionHeading
           :eyebrow="$t('nav.profile')"
-          :heading="pick(home.aboutIntro.heading)"
-          :body="pick(home.aboutIntro.body)"
+          :heading="$t('home.aboutHeading')"
+          :body="$t('home.aboutBody')"
         />
-        <MilestoneTimeline :items="home.milestones" />
+        <MilestoneTimeline :items="milestones" />
       </div>
     </section>
 

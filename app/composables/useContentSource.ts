@@ -10,18 +10,6 @@ import type {
   ServiceItem,
   SiteSettings
 } from '~/types/content'
-import {
-  mockCareers,
-  mockCategories,
-  mockCustomers,
-  mockHome,
-  mockPages,
-  mockPosts,
-  mockProducts,
-  mockServices,
-  mockSettings,
-  mockTestimonials
-} from '~/data/mock'
 
 /**
  * Content access layer.
@@ -33,56 +21,72 @@ import {
  *   POST {base}/{resource}-create      -> buat / ubah
  *   POST {base}/{resource}-delete      -> hapus (raw JSON array id)
  *
- * Kalau backend belum aktif atau request gagal, data dari app/data/mock.ts
- * dipakai supaya frontend tetap tampil utuh saat development.
+ * Tidak ada lagi fallback ke data lokal. Kalau backend tidak menjawab
+ * (NUXT_PUBLIC_API_BASE kosong atau request gagal), resource mengembalikan
+ * nilai kosong dan errornya dicatat ke console.
  */
 
 export type ResourceName =
   | 'settings'
   | 'home'
-  | 'pages'
   | 'services'
   | 'product-categories'
   | 'products'
   | 'customers'
-  | 'testimonials'
   | 'posts'
-  | 'careers'
-
-const FALLBACKS: Record<ResourceName, unknown> = {
-  settings: mockSettings,
-  home: mockHome,
-  pages: mockPages,
-  services: mockServices,
-  'product-categories': mockCategories,
-  products: mockProducts,
-  customers: mockCustomers,
-  testimonials: mockTestimonials,
-  posts: mockPosts,
-  careers: mockCareers
-}
 
 /** Pemetaan resource frontend -> nama resource API. */
-const API_RESOURCE: Partial<Record<ResourceName, string>> = {
+/**
+ * Batas baris untuk daftar yang harus tampil penuh di halaman publik.
+ * Backend membalas maksimal 10 baris bila `limit` tidak dikirim, sehingga
+ * data di halaman berikutnya (mis. produk baru) tidak pernah muncul.
+ */
+const FULL_LIST_LIMIT = 500
+
+const API_RESOURCE: Record<ResourceName, string> = {
   settings: 'site-setting',
   home: 'home-hero',
   services: 'service',
   'product-categories': 'product-category',
   products: 'product',
-  posts: 'post',
-  customers: 'customer'
+  customers: 'customer',
+  posts: 'post'
 }
 
-/** Ambil `count` item secara acak tanpa mengubah array asal. */
-function pickRandom<T>(items: T[], count: number): T[] {
-  const copy = [...items]
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    const tmp = copy[i] as T
-    copy[i] = copy[j] as T
-    copy[j] = tmp
-  }
-  return copy.slice(0, count)
+const EMPTY_SETTINGS: SiteSettings = {
+  companyName: { id: '', en: '' },
+  legalName: '',
+  tagline: { id: '', en: '' },
+  description: { id: '', en: '' },
+  agencyNumber: '',
+  foundedYear: '',
+  address: { id: '', en: '' },
+  phone: [],
+  whatsapp: '',
+  email: '',
+  officeHours: { id: '', en: '' },
+  logo: '',
+  profile: '',
+  companyProfile: '',
+  gallery: [],
+  social: {},
+  menuVisibility: {}
+}
+
+const EMPTY_HOME: HomeContent = {
+  hero: { heading: { id: '', en: '' }, image: '', imagePosition: 'right', textPosition: 'left' },
+  categories: [],
+  customers: []
+}
+
+const EMPTY_DEFAULTS: Record<ResourceName, unknown> = {
+  settings: EMPTY_SETTINGS,
+  home: EMPTY_HOME,
+  services: [],
+  'product-categories': [],
+  products: [],
+  customers: [],
+  posts: []
 }
 
 function loc(id: unknown, en: unknown): Localized {
@@ -260,7 +264,7 @@ export function useContentSource() {
   const apiBase = String(config.public.apiBase || '').replace(/\/+$/, '')
   const media = useMediaUrl()
 
-  const source = computed<'api' | 'mock'>(() => (apiBase ? 'api' : 'mock'))
+  const source = computed<'api' | 'none'>(() => (apiBase ? 'api' : 'none'))
 
   async function getList(resource: string, query: Record<string, string | number> = {}): Promise<Record<string, unknown>[]> {
     const res = await $fetch<{ data?: { query?: Record<string, unknown>[] } }>(
@@ -320,76 +324,61 @@ export function useContentSource() {
   async function request<T>(name: ResourceName, path = '', query: Record<string, string> = {}): Promise<T> {
     void path
     void query
-    const fallback = FALLBACKS[name] as T
-    if (!apiBase || !API_RESOURCE[name]) return fallback
 
     try {
       switch (name) {
         case 'settings': {
           const rows = await getList('site-setting')
-          return (rows[0] ? mapSettings(rows[0], media) : fallback) as T
+          return (rows[0] ? mapSettings(rows[0], media) : EMPTY_SETTINGS) as T
         }
         case 'home': {
-          const base = mockHome
           const heroRows = await getList('home-hero')
           const categories = await getList('product-category')
           const customers = await getList('customer')
           const home: HomeContent = {
-            hero: heroRows[0] ? mapHero(heroRows[0], media) : base.hero,
-            aboutIntro: base.aboutIntro,
-            milestones: base.milestones,
-            categories: categories.length ? pickRandom(categories.map((c) => mapCategory(c, media)), 6) : base.categories,
-            customers: customers.length ? pickRandom(customers.map((c) => mapCustomer(c, media)), 6) : base.customers,
-            testimonials: [],
-            cta: base.cta
+            hero: heroRows[0] ? mapHero(heroRows[0], media) : EMPTY_HOME.hero,
+            categories: categories.slice(0, 6).map((c) => mapCategory(c, media)),
+            customers: customers.slice(0, 6).map((c) => mapCustomer(c, media))
           }
           return home as T
         }
         case 'services': {
-          const rows = await getList('service')
-          return (rows.length ? rows.map((r) => mapService(r, media)) : fallback) as T
+          const rows = await getList('service', { limit: FULL_LIST_LIMIT })
+          return rows.map((r) => mapService(r, media)) as T
         }
         case 'product-categories': {
-          const rows = await getList('product-category')
-          return (rows.length ? rows.map((r) => mapCategory(r, media)) : fallback) as T
+          const rows = await getList('product-category', { limit: FULL_LIST_LIMIT })
+          return rows.map((r) => mapCategory(r, media)) as T
         }
         case 'products': {
-          const rows = await getList('product')
-          return (rows.length ? rows.map((r) => mapProduct(r, media)) : fallback) as T
+          const rows = await getList('product', { limit: FULL_LIST_LIMIT })
+          return rows.map((r) => mapProduct(r, media)) as T
         }
         case 'posts': {
-          const rows = await getList('post', { limit: 200 })
-          return (rows.length ? rows.map((r) => mapPost(r, media)) : fallback) as T
+          const rows = await getList('post', { limit: FULL_LIST_LIMIT })
+          return rows.map((r) => mapPost(r, media)) as T
         }
         case 'customers': {
-          const rows = await getList('customer')
-          return (rows.length ? rows.map((r) => mapCustomer(r, media)) : fallback) as T
+          const rows = await getList('customer', { limit: FULL_LIST_LIMIT })
+          return rows.map((r) => mapCustomer(r, media)) as T
         }
         default:
-          return fallback
+          return EMPTY_DEFAULTS[name] as T
       }
     } catch (error) {
-      if (import.meta.dev) {
-        console.warn(`[content] pakai data lokal untuk "${name}":`, (error as Error).message)
-      }
-      return fallback
+      console.error(`[content] gagal memuat "${name}" dari API:`, (error as Error).message)
+      return EMPTY_DEFAULTS[name] as T
     }
   }
 
   /** Ambil satu artikel berdasarkan slug. */
   async function getPost(slug: string): Promise<PostItem | null> {
-    if (!apiBase) {
-      const local = (mockPosts as unknown as PostItem[]).find((p) => p.slug === slug)
-      return local ?? null
-    }
     try {
       const rows = await getList('post', { limit: 200 })
       const row = rows.find((r) => String(r.slug || '') === slug)
       return row ? mapPost(row, media) : null
     } catch (error) {
-      if (import.meta.dev) {
-        console.warn(`[content] gagal memuat artikel "${slug}":`, (error as Error).message)
-      }
+      console.error(`[content] gagal memuat artikel "${slug}":`, (error as Error).message)
       return null
     }
   }
@@ -405,7 +394,7 @@ export function useCms<T>(name: ResourceName, key: string, path = '', query: Rec
   const { data } = useAsyncData<T>(`cms:${name}:${key}`, () => request<T>(name, path, query))
 
   return {
-    data: computed(() => data.value ?? (FALLBACKS[name] as T)),
+    data: computed(() => data.value ?? (EMPTY_DEFAULTS[name] as T)),
     source
   }
 }
@@ -413,5 +402,3 @@ export function useCms<T>(name: ResourceName, key: string, path = '', query: Rec
 export function useCompany() {
   return useCms<SiteSettings>('settings', 'site')
 }
-
-export type { SiteSettings }

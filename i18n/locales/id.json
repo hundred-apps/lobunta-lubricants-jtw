@@ -42,7 +42,12 @@
     "customersTitle": "Beberapa customer kami",
     "blogTitle": "Artikel terbaru",
     "promoTitle": "Promo-program",
-    "contactTitle": "Hubungi kami"
+    "contactTitle": "Hubungi kami",
+    "aboutHeading": "Perjalanan kami",
+    "aboutBody": "Lebih dari lima dekade pengalaman distribusi pelumas di Indonesia, dengan status distributor resmi Pertamina Lubricants sejak 1991.",
+    "ctaHeading": "Butuh rekomendasi pelumas untuk mesin Anda?",
+    "ctaBody": "Kirimkan tipe mesin, jenis operasi, dan spesifikasi unit Anda. Tim teknis kami akan merekomendasikan grade yang tepat.",
+    "ctaButton": "Hubungi Kami"
   },
   "products": {
     "title": "Produk",
@@ -158,8 +163,47 @@
     "privacy": "Kebijakan Privasi",
     "official": "Authorized Pertamina Lubricants Distributor"
   },
+  "milestones": [
+    {
+      "year": "1973",
+      "title": "CV. Lobunta Kencana Raya",
+      "description": "CV. Lobunta Kencana Raya didirikan pada 27 Januari 1973."
+    },
+    {
+      "year": "1977",
+      "title": "PT. Lobunta Kencana Raya",
+      "description": "Bentuk badan hukum berubah menjadi Perseroan Terbatas pada 30 September 1977."
+    },
+    {
+      "year": "1991",
+      "title": "Distributor Resmi Pertamina Lubricants",
+      "description": "Menjadi distributor resmi pelumas Pertamina dengan Nomor Agen C 705106."
+    }
+  ],
+  "staticPages": {
+    "faq": {
+      "title": "FAQ — Lobunta Lubricants",
+      "heading": "Pertanyaan yang sering diajukan",
+      "intro": "Beberapa pertanyaan yang paling sering kami terima dari pelanggan industri.",
+      "body": "<details><summary>Apakah produk yang dijual dijamin orisinal?</summary><p>Ya. Kami adalah Distributor Resmi Pertamina Lubricants dengan Nomor Agen C 705106, sehingga seluruh produk dijamin asli langsung dari Pertamina.</p></details>\n<details><summary>Apakah ada minimal pembelian?</summary><p>Tidak ada minimal pembelian untuk pembelian eceran. Untuk harga grosir dan kontrak pasokan rutin, silakan hubungi tim kami untuk penawaran khusus.</p></details>\n<details><summary>Metode pembayaran apa yang tersedia?</summary><p>Kami menerima transfer bank dan pembayaran tunai. Untuk pelanggan korporat, tersedia opsi pembayaran sesuai kesepakatan kontrak.</p></details>\n<details><summary>Apakah bisa dikirim ke luar kota?</summary><p>Bisa. Kami mendistribusikan produk ke seluruh Indonesia melalui mitra logistik, dengan estimasi waktu kirim yang disesuaikan tujuan.</p></details>\n<details><summary>Apakah menyediakan dukungan teknis?</summary><p>Ya. Tim teknis kami siap membantu merekomendasikan grade pelumas yang tepat sesuai tipe mesin dan kondisi operasi Anda.</p></details>\n<details><summary>Bagaimana cara mendapatkan penawaran harga?</summary><p>Kirimkan kebutuhan Anda melalui halaman Kontak atau WhatsApp. Sertakan tipe produk, jumlah, dan lokasi pengiriman untuk respons yang lebih cepat.</p></details>"
+    },
+    "privacyPolicy": {
+      "title": "Kebijakan Privasi",
+      "heading": "Kebijakan Privasi",
+      "intro": "Halaman ini menjelaskan bagaimana Lobunta Lubricants mengumpulkan, menggunakan, dan melindungi data pribadi Anda.",
+      "body": "<p><strong>Data yang kami kumpulkan.</strong> Kami mengumpulkan nama, nomor telepon, alamat email, dan pesan yang Anda kirimkan melalui formulir kontak atau WhatsApp.</p>\n<p><strong>Penggunaan data.</strong> Data tersebut digunakan hanya untuk menjawab pertanyaan, memenuhi permintaan penawaran, dan memproses pemesanan produk.</p>\n<p><strong>Berbagi data.</strong> Kami tidak menjual atau menyewakan data pribadi Anda kepada pihak ketiga.</p>\n<p><strong>Keamanan.</strong> Data disimpan pada server yang aksesnya terbatas dan hanya digunakan oleh personnel yang berwenang.</p>\n<p><strong>Hak Anda.</strong> Anda dapat meminta akses, koreksi, atau penghapusan data Anda dengan menghubungi kami melalui halaman kontak.</p>"
+    },
+    "termsConditions": {
+      "title": "Syarat & Ketentuan",
+      "heading": "Syarat & Ketentuan",
+      "intro": "Dengan menggunakan layanan dan melakukan transaksi dengan Lobunta Lubricants, Anda menyetujui syarat dan ketentuan berikut.",
+      "body": "<p><strong>1. Ruang lingkup.</strong> Syarat dan ketentuan ini mengatur penggunaan situs serta transaksi pembelian produk dan layanan dari Lobunta Lubricants.</p>\n<p><strong>2. Pesanan.</strong> Pesanan dianggap sah setelah dikonfirmasi oleh tim kami, baik melalui email, telepon, maupun WhatsApp.</p>\n<p><strong>3. Harga.</strong> Harga yang tercantum dapat berubah sewaktu-waktu tanpa pemberitahuan sebelumnya. Harga final mengikuti penawaran resmi yang kami kirimkan.</p>\n<p><strong>4. Pembayaran.</strong> Pembayaran dilakukan sesuai metode dan jangka waktu yang disepakati pada saat konfirmasi pesanan.</p>\n<p><strong>5. Pengiriman.</strong> Waktu pengiriman bersifat estimasi dan dapat dipengaruhi oleh ketersediaan stok serta layanan logistik pihak ketiga.</p>\n<p><strong>6. Jaminan produk.</strong> Seluruh produk yang kami jual dijamin orisinal dari Pertamina. Klaim atas produk yang rusak atau tidak sesuai harus disampaikan segera setelah barang diterima.</p>\n<p><strong>7. Pembatasan tanggung jawab.</strong> Kami tidak bertanggung jawab atas kerugian tidak langsung yang timbul dari penggunaan produk yang tidak sesuai anjuran teknis kami.</p>\n<p><strong>8. Hukum yang berlaku.</strong> Syarat dan ketentuan ini diatur oleh dan ditafsirkan sesuai hukum yang berlaku di Republik Indonesia.</p>"
+    }
+  },
   "meta": {
     "homeTitle": "Lobunta Lubricants - Distributor Resmi Oli dan Pelumas Pertamina",
-    "homeDescription": "Distributor resmi pelumas Pertamina sejak 1991 dengan Nomor Agen C 705106. Produk orisinal, stok siap kirim, harga kompetitif, dan dukungan teknis untuk industri."
+    "homeDescription": "Distributor resmi pelumas Pertamina sejak 1991 dengan Nomor Agen C 705106. Produk orisinal, stok siap kirim, harga kompetitif, dan dukungan teknis untuk industri.",
+    "blogTitle": "Blog & Artikel | Lobunta Lubricants",
+    "blogDescription": "Wawasan, tips, dan berita terbaru seputar pelumas, industri, dan teknologi."
   }
 }

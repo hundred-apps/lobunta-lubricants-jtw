@@ -1,3 +1,3 @@
 <template>
-  <CmsPageView slug="privacy-policy" />
+  <StaticPage page="privacyPolicy" />
 </template>

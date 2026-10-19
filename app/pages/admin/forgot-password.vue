@@ -5,6 +5,8 @@ definePageMeta({
 
 const { post } = useAdminApi()
 
+useSeoMeta({ title: 'Lupa Password | CMS Lobunta' })
+
 const form = reactive({ identifier: '', method: 'email' })
 const state = ref<'idle' | 'sending' | 'success' | 'error'>('idle')
 const message = ref('')

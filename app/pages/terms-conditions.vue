@@ -1,3 +1,3 @@
 <template>
-  <CmsPageView slug="terms-conditions" />
+  <StaticPage page="termsConditions" />
 </template>
