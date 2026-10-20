@@ -206,123 +206,125 @@ useSeoMeta({
           :heading="$t('profile.galleryTitle')"
           :body="$t('profile.galleryBody')"
         />
-        <div class="mx-auto mt-10 max-w-4xl">
+        <div class="mt-10">
           <GalleryCarousel :images="gallery" />
         </div>
       </div>
     </section>
 
     <section v-if="settings" class="section section-alt">
-      <div
-        class="container-page grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start"
-      >
+      <div class="container-page grid gap-10 lg:items-start">
         <div>
           <UiSectionHeading :heading="$t('profile.contactTitle')" />
-          <div class="mt-8 grid gap-5 sm:grid-cols-2">
-            <div class="card flex gap-4 p-5">
-              <span
-                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
-              >
-                <UiIcon name="map-pin" :size="20" />
-              </span>
-              <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">
-                  {{ $t("common.address") }}
-                </p>
-                <p class="mt-1 text-sm">{{ pick(settings.address) }}</p>
-              </div>
-            </div>
-
-            <div class="card flex gap-4 p-5">
-              <span
-                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
-              >
-                <UiIcon name="phone" :size="20" />
-              </span>
-              <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">
-                  {{ $t("common.callUs") }}
-                </p>
-                <p class="mt-1 space-y-1">
-                  <a
-                    v-for="phone in settings.phone"
-                    :key="phone"
-                    :href="`tel:+62${phone.replace(/^0/, '')}`"
-                    class="block text-sm font-medium text-brand-700 hover:underline dark:text-brand-300"
-                  >
-                    {{ phone }}
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            <div class="card flex gap-4 p-5">
-              <span
-                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
-              >
-                <UiIcon name="mail" :size="20" />
-              </span>
-              <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">
-                  {{ $t("common.email") }}
-                </p>
-                <a
-                  :href="`mailto:${settings.email}`"
-                  class="mt-1 block text-sm font-medium text-brand-700 hover:underline dark:text-brand-300"
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+            <!-- Kiri: 4 Card Info (2x2) -->
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="card flex gap-4 p-5">
+                <span
+                  class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
                 >
-                  {{ settings.email }}
-                </a>
+                  <UiIcon name="map-pin" :size="20" />
+                </span>
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-ink-mute">
+                    {{ $t("common.address") }}
+                  </p>
+                  <p class="mt-1 text-sm">{{ pick(settings.address) }}</p>
+                </div>
+              </div>
+
+              <div class="card flex gap-4 p-5">
+                <span
+                  class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+                >
+                  <UiIcon name="phone" :size="20" />
+                </span>
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-ink-mute">
+                    {{ $t("common.callUs") }}
+                  </p>
+                  <p class="mt-1 space-y-1">
+                    <a
+                      v-for="phone in settings.phone"
+                      :key="phone"
+                      :href="`tel:+62${phone.replace(/^0/, '')}`"
+                      class="block text-sm font-medium text-brand-700 hover:underline dark:text-brand-300"
+                    >
+                      {{ phone }}
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <div class="card flex gap-4 p-5">
+                <span
+                  class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+                >
+                  <UiIcon name="mail" :size="20" />
+                </span>
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-ink-mute">
+                    {{ $t("common.email") }}
+                  </p>
+                  <a
+                    :href="`mailto:${settings.email}`"
+                    class="mt-1 block text-sm font-medium text-brand-700 hover:underline dark:text-brand-300"
+                  >
+                    {{ settings.email }}
+                  </a>
+                </div>
+              </div>
+
+              <div class="card flex gap-4 p-5">
+                <span
+                  class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+                >
+                  <UiIcon name="clock" :size="20" />
+                </span>
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-ink-mute">
+                    {{ $t("common.openHours") }}
+                  </p>
+                  <p class="mt-1 text-sm">{{ pick(settings.officeHours) }}</p>
+                </div>
               </div>
             </div>
 
-            <div class="card flex gap-4 p-5">
-              <span
-                class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
-              >
-                <UiIcon name="clock" :size="20" />
-              </span>
+            <!-- Kanan: Company Profile Card (Full Height) -->
+            <div class="card flex flex-col justify-between p-6 h-full">
               <div>
-                <p class="text-xs uppercase tracking-wider text-ink-mute">
-                  {{ $t("common.openHours") }}
+                <span
+                  class="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
+                >
+                  <UiIcon name="document" :size="22" />
+                </span>
+                <h3 class="mt-5 text-lg">{{ $t("common.downloadProfile") }}</h3>
+                <p class="prose-lkr mt-2 text-sm">
+                  {{ $t("profile.downloadBody") }}
                 </p>
-                <p class="mt-1 text-sm">{{ pick(settings.officeHours) }}</p>
               </div>
+              <a
+                v-if="companyProfileUrl"
+                :href="companyProfileUrl"
+                target="_blank"
+                rel="noopener"
+                class="btn-primary mt-6 w-full"
+              >
+                <UiIcon name="document" :size="18" />
+                {{ $t("common.downloadProfile") }}
+              </a>
+              <a
+                v-else
+                :href="whatsappLink"
+                target="_blank"
+                rel="noopener"
+                class="btn-primary mt-6 w-full"
+              >
+                <UiIcon name="whatsapp" filled :size="18" />
+                {{ $t("career.requestProfile") }}
+              </a>
             </div>
           </div>
-        </div>
-
-        <div class="card flex flex-col justify-between p-6">
-          <div>
-            <span
-              class="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-700 dark:bg-white/10 dark:text-brand-300"
-            >
-              <UiIcon name="document" :size="22" />
-            </span>
-            <h3 class="mt-5 text-lg">{{ $t("common.downloadProfile") }}</h3>
-            <p class="prose-lkr mt-2 text-sm">
-              {{ $t("profile.downloadBody") }}
-            </p>
-          </div>
-          <a
-            v-if="companyProfileUrl"
-            :href="companyProfileUrl"
-            target="_blank"
-            rel="noopener"
-            class="btn-primary mt-6 w-full"
-          >
-            <UiIcon name="document" :size="18" />
-            {{ $t("common.downloadProfile") }}
-          </a>
-          <a
-            v-else
-            :href="whatsappLink"
-            target="_blank"
-            rel="noopener"
-            class="btn-primary mt-6 w-full"
-          >
-            <UiIcon name="whatsapp" filled :size="18" />
-            {{ $t("career.requestProfile") }}
-          </a>
         </div>
       </div>
     </section>
